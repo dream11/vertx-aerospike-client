@@ -104,10 +104,6 @@ public class AerospikeClientImpl implements AerospikeClient {
     this.schedule(promise -> promise.complete(this.aerospikeClient.getClusterStats()), handler);
   }
 
-  //TODO: what is this?
-  public void connect(Handler<AsyncResult<Void>> handler) {
-  }
-
   /**
    * Close all client connections to database server nodes.
    * <p>

@@ -55,8 +55,6 @@ public interface AerospikeClient extends AutoCloseable {
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   void getClusterStats(Handler<AsyncResult<ClusterStats>> handler);
 
-  void connect(Handler<AsyncResult<Void>> handler);
-
   void close();
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
