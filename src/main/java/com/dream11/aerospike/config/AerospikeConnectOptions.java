@@ -49,6 +49,18 @@ public class AerospikeConnectOptions {
 
   }
 
+  public AerospikeConnectOptions(ClientPolicy clientPolicy) {
+    this.clientPolicy = clientPolicy;
+    this.host = DEFAULT_HOST;
+    this.port = DEFAULT_PORT;
+    this.tendInterval = DEFAULT_TEND_INTERVAL;
+    this.readTimeout = DEFAULT_READ_TIMEOUT;
+    this.maxConnsPerNode = DEFAULT_MAX_CONNS_PER_NODE;
+    this.eventLoopSize = DEFAULT_EVENT_LOOP_SIZE;
+    this.maxCommandsInProcess = DEFAULT_MAX_COMMANDS_IN_PROCESS;
+    this.writeTimeout = DEFAULT_WRITE_TIMEOUT;
+  }
+
   @Fluent
   public AerospikeConnectOptions setMaxConnectRetries(int maxConnectRetries) {
     this.maxConnectRetries = maxConnectRetries;

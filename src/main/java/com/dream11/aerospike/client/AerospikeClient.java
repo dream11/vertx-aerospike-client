@@ -9,6 +9,7 @@ import com.aerospike.client.Record;
 import com.aerospike.client.Value;
 import com.aerospike.client.cluster.ClusterStats;
 import com.aerospike.client.policy.BatchPolicy;
+import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.QueryPolicy;
 import com.aerospike.client.policy.ScanPolicy;
@@ -29,25 +30,35 @@ import java.util.List;
 public interface AerospikeClient extends AutoCloseable {
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient createShared(Vertx vertx, AerospikeConnectOptions connectOptions) {
+  static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
     String sharedInstanceName = "__AerospikeClient.__for.__" + connectOptions.getHost() + ":" + connectOptions.getPort();
     return SharedDataUtils.getOrCreate(new io.vertx.reactivex.core.Vertx(vertx), sharedInstanceName,
         () -> new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy()));
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient createShared(Vertx vertx) {
-    return createShared(vertx, new AerospikeConnectOptions());
-  }
-
-  @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
-    return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy());
+  static AerospikeClient create(Vertx vertx, ClientPolicy clientPolicy) {
+    return create(vertx, new AerospikeConnectOptions(clientPolicy));
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient create(Vertx vertx) {
     return create(vertx, new AerospikeConnectOptions());
+  }
+
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  static AerospikeClient createNonShared(Vertx vertx, AerospikeConnectOptions connectOptions) {
+    return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy());
+  }
+
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  static AerospikeClient createNonShared(Vertx vertx) {
+    return createNonShared(vertx, new AerospikeConnectOptions());
+  }
+
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  static AerospikeClient createNonShared(Vertx vertx, ClientPolicy clientPolicy) {
+    return createNonShared(vertx, new AerospikeConnectOptions(clientPolicy));
   }
 
   void isConnected(Handler<AsyncResult<Boolean>> handler);
