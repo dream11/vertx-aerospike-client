@@ -29,10 +29,20 @@ import java.util.List;
 public interface AerospikeClient extends AutoCloseable {
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
+  static AerospikeClient createShared(Vertx vertx, AerospikeConnectOptions connectOptions) {
     String sharedInstanceName = "__AerospikeClient.__for.__" + connectOptions.getHost() + ":" + connectOptions.getPort();
     return SharedDataUtils.getOrCreate(new io.vertx.reactivex.core.Vertx(vertx), sharedInstanceName,
         () -> new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy()));
+  }
+
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  static AerospikeClient createShared(Vertx vertx) {
+    return createShared(vertx, new AerospikeConnectOptions());
+  }
+
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
+    return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy());
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)

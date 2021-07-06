@@ -31,7 +31,11 @@ Add the following dependency to the *dependencies* section of your build descrip
     .setHosts("my-host")
     .setEventLoopSize(16);
 
+  // create non shared aerospike client
   AerospikeClient client = AerospikeClient.create(vertx, connectOptions);
+
+  // create a shared aerospike client across vertx instance
+  AerospikeClient client = AerospikeClient.createShared(vertx, connectOptions);
   
 ```
 

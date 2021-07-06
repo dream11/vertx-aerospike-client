@@ -118,6 +118,7 @@ public class AerospikeConnectOptions {
     this.clientPolicy.maxConnsPerNode = this.getMaxConnsPerNode();
     this.clientPolicy.writePolicyDefault.setTimeout(this.getWriteTimeout());
     this.clientPolicy.readPolicyDefault.setTimeout(this.getReadTimeout());
+    this.clientPolicy.tendInterval = this.getTendInterval();
     return this;
   }
 
