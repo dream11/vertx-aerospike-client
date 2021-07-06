@@ -20,19 +20,13 @@ import java.util.List;
 public interface AerospikeClient extends AutoCloseable {
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public static AerospikeClient create(Vertx vertx, AerospikeConnectOptions config) {
-    return new AerospikeClientFactoryImpl().getClient(vertx, config);
+  public static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
+    return new AerospikeClientFactoryImpl().getClient(vertx, connectOptions);
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   public static AerospikeClient create(Vertx vertx) {
     return new AerospikeClientFactoryImpl().getClient(vertx);
-  }
-
-  @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public static AerospikeClient create(
-      Vertx vertx, ClientPolicy clientPolicy, AerospikeConnectOptions config) {
-    return new AerospikeClientFactoryImpl().getClient(vertx, clientPolicy, config);
   }
 
   void isConnected(Handler<AsyncResult<Boolean>> handler);

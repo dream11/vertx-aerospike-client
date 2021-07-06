@@ -19,31 +19,24 @@ public class AerospikeClientFactoryImpl implements AerospikeClientFactory {
     AerospikeConnectOptions config = new AerospikeConnectOptions();
     return getClient(vertx, config);
   }
-
   @Override
-  public AerospikeClient getClient(Vertx vertx, AerospikeConnectOptions config) {
-    ClientPolicy clientPolicy = PolicyUtil.getClientPolicy();
-    return getClient(vertx, clientPolicy, config);
-  }
-
-  @Override
-  public AerospikeClient getClient(Vertx vertx, ClientPolicy clientPolicy, AerospikeConnectOptions config) {
-    String sharedInstanceName = "__AerospikeClient.__for.__" + config.getHosts() + ":" + config.getPort();
+  public AerospikeClient getClient(Vertx vertx, AerospikeConnectOptions connectOptions) {
+    String sharedInstanceName = "__AerospikeClient.__for.__" + connectOptions.getHost() + ":" + connectOptions.getPort();
 
     return SharedDataUtils.getOrCreate(new io.vertx.reactivex.core.Vertx(vertx), sharedInstanceName,
         () -> {
-          PolicyUtil.setPolicies(clientPolicy, config);
-          return getClientWithRetry(vertx, clientPolicy, config);
+          PolicyUtil.setPolicies(connectOptions.getClientPolicy(), connectOptions);
+          return getClientWithRetry(vertx, connectOptions);
         });
   }
 
-  private AerospikeClient getClientWithRetry(Vertx vertx, ClientPolicy policy, AerospikeConnectOptions config) {
+  private AerospikeClient getClientWithRetry(Vertx vertx, AerospikeConnectOptions connectOptions) {
     try {
-      return new AerospikeClientImpl(vertx, policy, new Host(config.getHosts(), config.getPort()));
+      return new AerospikeClientImpl(vertx, connectOptions.getClientPolicy(), new Host(connectOptions.getHost(), connectOptions.getPort()));
     } catch (Exception e) {
       log.error("Error while connecting to aerospike", e);
       log.info("retrying to connnect to aerospike");
-      return getClientWithRetry(vertx, policy, config);
+      return getClientWithRetry(vertx, connectOptions);
     }
   }
 }

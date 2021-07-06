@@ -18,14 +18,14 @@ public class PolicyUtil {
         return clientPolicy;
     }
 
-    public static void setPolicies(ClientPolicy policy, AerospikeConnectOptions config) {
+    public static void setPolicies(ClientPolicy policy, AerospikeConnectOptions connectOptions) {
         EventPolicy eventPolicy = new EventPolicy();
-        eventPolicy.maxCommandsInProcess = config.getMaxCommandsInProcess();
-        EventLoopGroup group = getEventLoopGroup(config.getEventLoopSize());
+        eventPolicy.maxCommandsInProcess = connectOptions.getMaxCommandsInProcess();
+        EventLoopGroup group = getEventLoopGroup(connectOptions.getEventLoopSize());
         policy.eventLoops = new NettyEventLoops(eventPolicy, group);
-        policy.maxConnsPerNode = config.getMaxConnsPerNode();
-        policy.writePolicyDefault.setTimeout(config.getWriteTimeout());
-        policy.readPolicyDefault.setTimeout(config.getReadTimeout());
+        policy.maxConnsPerNode = connectOptions.getMaxConnsPerNode();
+        policy.writePolicyDefault.setTimeout(connectOptions.getWriteTimeout());
+        policy.readPolicyDefault.setTimeout(connectOptions.getReadTimeout());
     }
 
     private static EventLoopGroup getEventLoopGroup(int size) {

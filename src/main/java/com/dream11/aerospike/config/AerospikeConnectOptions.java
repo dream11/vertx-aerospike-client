@@ -1,6 +1,7 @@
 package com.dream11.aerospike.config;
 
-import com.typesafe.config.Optional;
+import com.aerospike.client.policy.ClientPolicy;
+import com.aerospike.client.policy.Replica;
 import io.vertx.codegen.annotations.Fluent;
 import lombok.Data;
 
@@ -15,25 +16,40 @@ public class AerospikeConnectOptions {
   static final int DEFAULT_TEND_INTERVAL = 1000;
   static final int DEFAULT_MAX_CONNS_PER_NODE = DEFAULT_MAX_COMMANDS_IN_PROCESS * DEFAULT_EVENT_LOOP_SIZE;
 
-  private String hosts = DEFAULT_HOST;
-  @Optional
-  private int port = DEFAULT_PORT;
-  @Optional
-  private int tendInterval = DEFAULT_TEND_INTERVAL;
-  @Optional
-  private int readTimeout = DEFAULT_READ_TIMEOUT;
-  @Optional
-  private int maxConnsPerNode = DEFAULT_MAX_CONNS_PER_NODE;
-  @Optional
-  private int eventLoopSize = DEFAULT_EVENT_LOOP_SIZE;
-  @Optional
-  private int maxCommandsInProcess = DEFAULT_MAX_COMMANDS_IN_PROCESS;
-  @Optional
-  private int writeTimeout = DEFAULT_WRITE_TIMEOUT;
+  private String host;
+  private int port;
+  private int tendInterval;
+  private int readTimeout;
+  private int maxConnsPerNode;
+  private int eventLoopSize;
+  private int maxCommandsInProcess;
+  private int writeTimeout;
+  private ClientPolicy clientPolicy;
+
+  public AerospikeConnectOptions() {
+    ClientPolicy clientPolicy = new ClientPolicy();
+    clientPolicy.readPolicyDefault.replica = Replica.MASTER_PROLES;
+    this.clientPolicy = clientPolicy;
+    this.host = DEFAULT_HOST;
+    this.port = DEFAULT_PORT;
+    this.tendInterval = DEFAULT_TEND_INTERVAL;
+    this.readTimeout = DEFAULT_READ_TIMEOUT;
+    this.maxConnsPerNode = DEFAULT_MAX_CONNS_PER_NODE;
+    this.eventLoopSize = DEFAULT_EVENT_LOOP_SIZE;
+    this.maxCommandsInProcess = DEFAULT_MAX_COMMANDS_IN_PROCESS;
+    this.writeTimeout = DEFAULT_WRITE_TIMEOUT;
+
+  }
 
   @Fluent
-  public AerospikeConnectOptions setHosts(String hosts) {
-    this.hosts = hosts;
+  public AerospikeConnectOptions setClientPolicy(ClientPolicy clientPolicy) {
+    this.clientPolicy = clientPolicy;
+    return this;
+  }
+
+  @Fluent
+  public AerospikeConnectOptions setHost(String host) {
+    this.host = host;
     return this;
   }
 
