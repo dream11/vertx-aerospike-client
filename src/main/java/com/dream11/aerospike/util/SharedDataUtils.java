@@ -13,9 +13,7 @@ public final class SharedDataUtils {
 
   public static <T> T getOrCreate(Vertx vertx, String name, Supplier<T> supplier) {
     LocalMap<Object, Object> singletons = vertx.getDelegate().sharedData().getLocalMap(SHARED_DATA_MAP_NAME);
-    return (T) ((ThreadSafe)singletons.computeIfAbsent(name, (k) -> {
-      return new ThreadSafe(supplier.get());
-    })).getObject();
+    return (T) ((ThreadSafe)singletons.computeIfAbsent(name, k -> new ThreadSafe(supplier.get()))).getObject();
   }
 
   static class ThreadSafe<T> implements Shareable {

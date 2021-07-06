@@ -1,12 +1,18 @@
 package com.dream11.aerospike.config;
 
+import com.aerospike.client.async.EventPolicy;
+import com.aerospike.client.async.NettyEventLoops;
 import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.Replica;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.vertx.codegen.annotations.Fluent;
 import lombok.Data;
 
 @Data
 public class AerospikeConnectOptions {
+  static final String OS = System.getProperty("os.name");
   static final String DEFAULT_HOST = "localhost";
   static final int DEFAULT_PORT = 3000;
   static final int DEFAULT_EVENT_LOOP_SIZE = 2 * Runtime.getRuntime().availableProcessors();
@@ -16,6 +22,7 @@ public class AerospikeConnectOptions {
   static final int DEFAULT_TEND_INTERVAL = 1000;
   static final int DEFAULT_MAX_CONNS_PER_NODE = DEFAULT_MAX_COMMANDS_IN_PROCESS * DEFAULT_EVENT_LOOP_SIZE;
   static final int DEFAULT_MAX_CONNECT_RETRIES = 2;
+
   private String host;
   private int port;
   private int tendInterval;
@@ -100,5 +107,22 @@ public class AerospikeConnectOptions {
   public AerospikeConnectOptions setWriteTimeout(int writeTimeout) {
     this.writeTimeout = writeTimeout;
     return this;
+  }
+
+  @Fluent
+  public AerospikeConnectOptions updateClientPolicy() {
+    EventPolicy eventPolicy = new EventPolicy();
+    eventPolicy.maxCommandsInProcess = this.getMaxCommandsInProcess();
+    EventLoopGroup group = getEventLoopGroup(this.getEventLoopSize());
+    this.clientPolicy.eventLoops = new NettyEventLoops(eventPolicy, group);
+    this.clientPolicy.maxConnsPerNode = this.getMaxConnsPerNode();
+    this.clientPolicy.writePolicyDefault.setTimeout(this.getWriteTimeout());
+    this.clientPolicy.readPolicyDefault.setTimeout(this.getReadTimeout());
+    return this;
+  }
+
+  private EventLoopGroup getEventLoopGroup(int size) {
+    return OS.contains("linux") || OS.contains("unix") ?
+        new EpollEventLoopGroup(size) : new NioEventLoopGroup(size);
   }
 }
