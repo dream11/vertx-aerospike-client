@@ -15,7 +15,7 @@ public class AerospikeConnectOptions {
   static final int DEFAULT_READ_TIMEOUT = 1500;
   static final int DEFAULT_TEND_INTERVAL = 1000;
   static final int DEFAULT_MAX_CONNS_PER_NODE = DEFAULT_MAX_COMMANDS_IN_PROCESS * DEFAULT_EVENT_LOOP_SIZE;
-
+  static final int DEFAULT_MAX_CONNECT_RETRIES = 2;
   private String host;
   private int port;
   private int tendInterval;
@@ -25,6 +25,7 @@ public class AerospikeConnectOptions {
   private int maxCommandsInProcess;
   private int writeTimeout;
   private ClientPolicy clientPolicy;
+  private int maxConnectRetries = DEFAULT_MAX_CONNECT_RETRIES;
 
   public AerospikeConnectOptions() {
     ClientPolicy clientPolicy = new ClientPolicy();
@@ -39,6 +40,12 @@ public class AerospikeConnectOptions {
     this.maxCommandsInProcess = DEFAULT_MAX_COMMANDS_IN_PROCESS;
     this.writeTimeout = DEFAULT_WRITE_TIMEOUT;
 
+  }
+
+  @Fluent
+  public AerospikeConnectOptions setMaxConnectRetries(int maxConnectRetries) {
+    this.maxConnectRetries = maxConnectRetries;
+    return this;
   }
 
   @Fluent

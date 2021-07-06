@@ -1,32 +1,40 @@
 package com.dream11.aerospike.client;
 
-import com.aerospike.client.*;
+import com.aerospike.client.AerospikeException;
+import com.aerospike.client.BatchRead;
+import com.aerospike.client.Bin;
+import com.aerospike.client.Key;
+import com.aerospike.client.Operation;
+import com.aerospike.client.Record;
+import com.aerospike.client.Value;
 import com.aerospike.client.cluster.ClusterStats;
-import com.aerospike.client.policy.*;
+import com.aerospike.client.policy.BatchPolicy;
+import com.aerospike.client.policy.Policy;
+import com.aerospike.client.policy.QueryPolicy;
+import com.aerospike.client.policy.ScanPolicy;
+import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.query.KeyRecord;
 import com.aerospike.client.query.PartitionFilter;
 import com.aerospike.client.query.Statement;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
-import com.dream11.aerospike.factory.AerospikeClientFactoryImpl;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-
 import java.util.List;
 
 @VertxGen
 public interface AerospikeClient extends AutoCloseable {
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
-    return new AerospikeClientFactoryImpl().getClient(vertx, connectOptions);
+  static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
+    return new AerospikeClientImpl(vertx, connectOptions);
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public static AerospikeClient create(Vertx vertx) {
-    return new AerospikeClientFactoryImpl().getClient(vertx);
+  static AerospikeClient create(Vertx vertx) {
+    return create(vertx, new AerospikeConnectOptions());
   }
 
   void isConnected(Handler<AsyncResult<Boolean>> handler);
