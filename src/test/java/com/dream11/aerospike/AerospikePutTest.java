@@ -1,8 +1,9 @@
 package com.dream11.aerospike;
 
+import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
-import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
+import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -13,8 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({VertxExtension.class, Setup.class})
-public class AerospikeGetTest {
-
+public class AerospikePutTest {
   private static AerospikeClient aerospikeClient;
 
   @BeforeAll
@@ -27,24 +27,18 @@ public class AerospikeGetTest {
   }
 
   @Test
-  public void getAllBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"))
+  public void putAllBins(VertxTestContext testContext) {
+    Bin[] bins = {new Bin("a", "aaa"), new Bin("b", 111)};
+    Key testKey = new Key("test", "testset", "zzz");
+    aerospikeClient.rxPut(null, testKey, bins)
+        .doOnError(testContext::failNow)
+        .subscribe();
+    aerospikeClient.rxGet(null, testKey)
         .subscribe(record -> {
-          MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
-          MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(123));
-          System.out.println("getAllBins test passed!");
+          MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("aaa"));
+          MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(111));
+          System.out.println("putAllBins test passed!");
           testContext.completeNow();
         }, testContext::failNow);
   }
-
-  @Test
-  public void getSelectedBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"), new String[]{"a"})
-        .subscribe(record -> {
-          MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
-          System.out.println("getSelectedBins test passed!");
-          testContext.completeNow();
-        }, testContext::failNow);
-  }
-
 }

@@ -25,6 +25,7 @@ public class AerospikeConnectOptions {
   private int maxConnsPerNode;
   private int eventLoopSize;
   private int maxCommandsInProcess;
+  private int maxCommandsInQueue;
   private ClientPolicy clientPolicy;
   private int maxConnectRetries;
 
@@ -83,9 +84,16 @@ public class AerospikeConnectOptions {
   }
 
   @Fluent
+  public AerospikeConnectOptions setMaxCommandsInQueue(int maxCommandsInQueue) {
+    this.maxCommandsInQueue = maxCommandsInQueue;
+    return this;
+  }
+
+  @Fluent
   public AerospikeConnectOptions updateClientPolicy() {
     EventPolicy eventPolicy = new EventPolicy();
     eventPolicy.maxCommandsInProcess = this.getMaxCommandsInProcess();
+    eventPolicy.maxCommandsInQueue = this.getMaxCommandsInQueue();
     EventLoopGroup group = getEventLoopGroup(this.getEventLoopSize());
     this.clientPolicy.eventLoops = new NettyEventLoops(eventPolicy, group);
     this.clientPolicy.maxConnsPerNode = this.getMaxConnsPerNode();
