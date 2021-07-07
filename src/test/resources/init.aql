@@ -1,0 +1,1 @@
+INSERT INTO test.testset (PK, a, b) VALUES ('xyz', 'abc', 123)
