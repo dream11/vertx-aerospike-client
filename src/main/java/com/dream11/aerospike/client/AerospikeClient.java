@@ -9,7 +9,6 @@ import com.aerospike.client.Record;
 import com.aerospike.client.Value;
 import com.aerospike.client.cluster.ClusterStats;
 import com.aerospike.client.policy.BatchPolicy;
-import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.QueryPolicy;
 import com.aerospike.client.policy.ScanPolicy;
@@ -37,11 +36,6 @@ public interface AerospikeClient extends AutoCloseable {
   }
 
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient create(Vertx vertx, ClientPolicy clientPolicy) {
-    return create(vertx, new AerospikeConnectOptions(clientPolicy));
-  }
-
-  @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient create(Vertx vertx) {
     return create(vertx, new AerospikeConnectOptions());
   }
@@ -54,11 +48,6 @@ public interface AerospikeClient extends AutoCloseable {
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient createNonShared(Vertx vertx) {
     return createNonShared(vertx, new AerospikeConnectOptions());
-  }
-
-  @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  static AerospikeClient createNonShared(Vertx vertx, ClientPolicy clientPolicy) {
-    return createNonShared(vertx, new AerospikeConnectOptions(clientPolicy));
   }
 
   void isConnected(Handler<AsyncResult<Boolean>> handler);

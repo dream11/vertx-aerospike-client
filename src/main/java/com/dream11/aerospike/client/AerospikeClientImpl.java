@@ -47,7 +47,7 @@ public class AerospikeClientImpl implements AerospikeClient {
   public AerospikeClientImpl(Vertx vertx, AerospikeConnectOptions connectOptions) {
     this.vertx = (VertxInternal) vertx;
     this.connectOptions = connectOptions;
-    this.aerospikeClient = connectClientWithRetry();
+    this.aerospikeClient = connectClientWithRetry(0);
     eventLoops = connectOptions.getClientPolicy().eventLoops;
   }
 
@@ -65,10 +65,6 @@ public class AerospikeClientImpl implements AerospikeClient {
     }, result -> resultHandler.handle((AsyncResult<T>) result));
   }
 
-  private com.aerospike.client.AerospikeClient connectClientWithRetry() {
-    return connectClientWithRetry(0);
-  }
-
   private com.aerospike.client.AerospikeClient connectClientWithRetry(int retryCount) {
     if (this.connectOptions.getMaxConnectRetries() != -1 && retryCount > this.connectOptions.getMaxConnectRetries()) {
       log.error("Exhausted max connection retries after {} attempts", retryCount);
@@ -80,7 +76,7 @@ public class AerospikeClientImpl implements AerospikeClient {
             connectOptions.getPort()));
       } catch (Exception e) {
         log.error("Error while connecting to aerospike", e);
-        log.info("retrying to connect to aerospike");
+        log.info("Retrying to connect to aerospike");
         return connectClientWithRetry(retryCount + 1);
       }
     }
