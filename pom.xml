@@ -26,6 +26,7 @@
     <testcontainers.version>1.15.3</testcontainers.version>
     <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
     <junit.version>4.13.2</junit.version>
+    <hamcrest.version>2.2</hamcrest.version>
 
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     <maven.compile.version>1.8</maven.compile.version>
@@ -143,6 +144,12 @@
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
     </dependency>
 
   </dependencies>
