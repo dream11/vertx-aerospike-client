@@ -1,8 +1,8 @@
 package com.dream11.aerospike;
 
-import com.dream11.aerospike.client.AerospikeClient;
+import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
-import io.vertx.core.Vertx;
+import io.vertx.reactivex.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import lombok.extern.slf4j.Slf4j;
