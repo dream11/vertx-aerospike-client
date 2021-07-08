@@ -34,11 +34,11 @@ public class AerospikePutTest {
     aerospikeClient.rxPut(null, testKey, bins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, testKey))
-        .subscribe(record -> {
+        .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("aaa"));
           MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(111));
-          log.info("putAllBins test passed!");
-          testContext.completeNow();
-        }, testContext::failNow);
+        })
+        .doOnSuccess(record -> log.info("putAllBins test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 }

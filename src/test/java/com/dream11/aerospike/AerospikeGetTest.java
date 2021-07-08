@@ -30,22 +30,22 @@ public class AerospikeGetTest {
   @Test
   public void getAllBins(VertxTestContext testContext) {
     aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"))
-        .subscribe(record -> {
+        .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
           MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(123));
-          log.info("getAllBins test passed!");
-          testContext.completeNow();
-        }, testContext::failNow);
+        })
+        .doOnSuccess(record -> log.info("getAllBins test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 
   @Test
   public void getSelectedBins(VertxTestContext testContext) {
     aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"), new String[] {"a"})
-        .subscribe(record -> {
+        .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
-          log.info("getSelectedBins test passed!");
-          testContext.completeNow();
-        }, testContext::failNow);
+        })
+        .doOnSuccess(record -> log.info("getSelectedBins test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 
 }
