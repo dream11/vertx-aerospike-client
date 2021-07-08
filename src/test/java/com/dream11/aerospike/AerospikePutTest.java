@@ -32,9 +32,8 @@ public class AerospikePutTest {
     Bin[] bins = {new Bin("a", "aaa"), new Bin("b", 111)};
     Key testKey = new Key("test", "testset", "zzz");
     aerospikeClient.rxPut(null, testKey, bins)
-        .doOnError(testContext::failNow)
-        .subscribe();
-    aerospikeClient.rxGet(null, testKey)
+        .ignoreElement()
+        .andThen(aerospikeClient.rxGet(null, testKey))
         .subscribe(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("aaa"));
           MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(111));
