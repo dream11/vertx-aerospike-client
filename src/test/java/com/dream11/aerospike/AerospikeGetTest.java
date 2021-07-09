@@ -1,11 +1,13 @@
 package com.dream11.aerospike;
 
+import com.aerospike.client.BatchRead;
 import com.aerospike.client.Key;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
 import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class AerospikeGetTest {
 
   private static AerospikeClient aerospikeClient;
+  private final Key key1 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey1");
+  private final Key key2 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey2");
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -29,10 +33,10 @@ public class AerospikeGetTest {
 
   @Test
   public void getAllBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "xyz"))
+    aerospikeClient.rxGet(null, key1)
         .doOnSuccess(record -> {
-          MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
-          MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(123));
+          MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("Mumbai"));
+          MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(123));
         })
         .doOnSuccess(record -> log.info("getAllBins test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
@@ -40,11 +44,56 @@ public class AerospikeGetTest {
 
   @Test
   public void getSelectedBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "xyz"), new String[] {"a"})
+    aerospikeClient.rxGet(null, key1, new String[] {"bin1"})
         .doOnSuccess(record -> {
-          MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
+          MatcherAssert.assertThat(record.bins.size(), Matchers.equalTo(1));
+          MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("Mumbai"));
         })
         .doOnSuccess(record -> log.info("getSelectedBins test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
+  }
+
+  @Test
+  public void getAllBinsFromMultipleKeys(VertxTestContext testContext) {
+    aerospikeClient.rxGet(null, new Key[] {key1, key2})
+        .doOnSuccess(record -> {
+          MatcherAssert.assertThat(record.get(0).getString("bin1"), Matchers.equalTo("Mumbai"));
+          MatcherAssert.assertThat(record.get(0).getInt("bin2"), Matchers.equalTo(123));
+
+          MatcherAssert.assertThat(record.get(1).getString("bin1"), Matchers.equalTo("Delhi"));
+          MatcherAssert.assertThat(record.get(1).getInt("bin2"), Matchers.equalTo(3));
+        })
+        .doOnSuccess(record -> log.info("getAllBinsFromMultipleKeys test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
+  }
+
+  @Test
+  public void getSelectedBinsFromMultipleKeys(VertxTestContext testContext) {
+    aerospikeClient.rxGet(null, new Key[] {key1, key2}, new String[] {"bin1"})
+        .doOnSuccess(record -> {
+          MatcherAssert.assertThat(record.get(0).bins.size(), Matchers.equalTo(1));
+          MatcherAssert.assertThat(record.get(0).getString("bin1"), Matchers.equalTo("Mumbai"));
+
+          MatcherAssert.assertThat(record.get(1).bins.size(), Matchers.equalTo(1));
+          MatcherAssert.assertThat(record.get(1).getString("bin1"), Matchers.equalTo("Delhi"));
+        })
+        .doOnSuccess(record -> log.info("getSelectedBinsFromMultipleKeys test passed!"))
+        .subscribe(record -> testContext.completeNow(), testContext::failNow);
+  }
+
+  @Test
+  public void getDifferentBinsFromMultipleKeys(VertxTestContext testContext) {
+    BatchRead batchRead1 = new BatchRead(key1, true);
+    BatchRead batchRead2 = new BatchRead(key2, new String[] {"bin1"});
+    aerospikeClient.rxGet(null, Arrays.asList(batchRead1, batchRead2))
+        .doOnSuccess(record -> {
+          MatcherAssert.assertThat(record.get(0).record.getString("bin1"), Matchers.equalTo("Mumbai"));
+          MatcherAssert.assertThat(record.get(0).record.getInt("bin2"), Matchers.equalTo(123));
+
+          MatcherAssert.assertThat(record.get(1).record.bins.size(), Matchers.equalTo(1));
+          MatcherAssert.assertThat(record.get(1).record.getString("bin1"), Matchers.equalTo("Delhi"));
+        })
+        .doOnSuccess(record -> log.info("getDifferentBinsFromMultipleKeys test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 

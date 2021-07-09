@@ -327,8 +327,8 @@ public interface AerospikeClient extends AutoCloseable {
    * @throws AerospikeException	  if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public void scanAll(ScanPolicy policy, String namespace, String setName,
-                      String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
+  void scanAll(ScanPolicy policy, String namespace, String setName,
+               String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException;
 
   /**
@@ -344,8 +344,8 @@ public interface AerospikeClient extends AutoCloseable {
    * @throws AerospikeException	  if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  public void scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
-                             String setName, String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
+  void scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
+                      String setName, String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException;
 
   /**

@@ -1,1 +1,2 @@
-INSERT INTO test.testset (PK, a, b) VALUES ('xyz', 'abc', 123)
+INSERT INTO test.testset (PK, bin1, bin2) VALUES ('pkey1', 'Mumbai', 123)
+INSERT INTO test.testset (PK, bin1, bin2) VALUES ('pkey2', 'Delhi', 3)
