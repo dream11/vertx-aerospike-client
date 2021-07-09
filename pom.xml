@@ -35,6 +35,7 @@
     <maven.clean.plugin.vesion>3.1.0</maven.clean.plugin.vesion>
     <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
     <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
+    <maven.jacoco.plugin.version>0.8.6</maven.jacoco.plugin.version>
   </properties>
 
   <dependencies>
@@ -245,6 +246,27 @@
           <!-- Ensures root cause ends up in the console -->
           <trimStackTrace>false</trimStackTrace>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${maven.jacoco.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>post-unit-test</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
