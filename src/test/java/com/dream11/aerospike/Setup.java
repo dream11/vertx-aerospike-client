@@ -12,7 +12,7 @@ import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupC
 
 @Slf4j
 public class Setup implements BeforeAllCallback, AfterAllCallback, ExtensionContext.Store.CloseableResource {
-  public static final String AEROSPIKE_IMAGE = System.getProperty("aerospike.image", "aerospike/aerospike-server");
+  public static final String AEROSPIKE_IMAGE = System.getProperty(Constants.AEROSPIKE_IMAGE_KEY, Constants.DEFAULT_AEROSPIKE_IMAGE);
   private static boolean started = false;
   private GenericContainer aerospikeContainer;
 
@@ -27,16 +27,16 @@ public class Setup implements BeforeAllCallback, AfterAllCallback, ExtensionCont
       aerospikeContainer = new GenericContainer<>(AEROSPIKE_IMAGE);
       log.info("Starting aerospike container from image:{}", AEROSPIKE_IMAGE);
       aerospikeContainer
-          .withEnv("NAMESPACE", "test")
+          .withEnv(Constants.NAMESPACE, Constants.TEST_NAMESPACE)
           .withExposedPorts(3000)
           .withStartupTimeout(Duration.ofSeconds(1000))
           .withStartupCheckStrategy(new MinimumDurationRunningStartupCheckStrategy(Duration.ofSeconds(10)))
-          .addFileSystemBind("src/test/resources/init.aql", "/aerospike-seed/init.aql", BindMode.READ_ONLY);
+          .addFileSystemBind(Constants.INIT_DATA_PATH, Constants.INIT_DATA_PATH_IN_CONTAINER, BindMode.READ_ONLY);
       aerospikeContainer.start();
       // add seed data in containers
-      aerospikeContainer.execInContainer("aql", "-f", "aerospike-seed/init.aql");
-      System.setProperty("aerospike.host", aerospikeContainer.getHost());
-      System.setProperty("aerospike.port", String.valueOf(aerospikeContainer.getFirstMappedPort()));
+      aerospikeContainer.execInContainer("aql", "-f", Constants.INIT_DATA_PATH_IN_CONTAINER);
+      System.setProperty(Constants.AEROSPIKE_HOST, aerospikeContainer.getHost());
+      System.setProperty(Constants.AEROSPIKE_PORT, String.valueOf(aerospikeContainer.getFirstMappedPort()));
     }
   }
 

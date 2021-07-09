@@ -22,15 +22,15 @@ public class AerospikePutTest {
   @BeforeAll
   public static void setup(Vertx vertx) {
     AerospikeConnectOptions connectOptions = new AerospikeConnectOptions()
-        .setHost(System.getProperty("aerospike.host"))
-        .setPort(Integer.parseInt(System.getProperty("aerospike.port")));
+        .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
+        .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
   }
 
   @Test
   public void putAllBins(VertxTestContext testContext) {
     Bin[] bins = {new Bin("a", "aaa"), new Bin("b", 111)};
-    Key testKey = new Key("test", "testset", "zzz");
+    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "zzz");
     aerospikeClient.rxPut(null, testKey, bins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, testKey))

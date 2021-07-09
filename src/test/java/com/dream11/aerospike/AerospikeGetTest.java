@@ -22,14 +22,14 @@ public class AerospikeGetTest {
   @BeforeAll
   public static void setup(Vertx vertx) {
     AerospikeConnectOptions connectOptions = new AerospikeConnectOptions()
-        .setHost(System.getProperty("aerospike.host"))
-        .setPort(Integer.parseInt(System.getProperty("aerospike.port")));
+        .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
+        .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
   }
 
   @Test
   public void getAllBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"))
+    aerospikeClient.rxGet(null, new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "xyz"))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
           MatcherAssert.assertThat(record.getInt("b"), Matchers.equalTo(123));
@@ -40,7 +40,7 @@ public class AerospikeGetTest {
 
   @Test
   public void getSelectedBins(VertxTestContext testContext) {
-    aerospikeClient.rxGet(null, new Key("test", "testset", "xyz"), new String[] {"a"})
+    aerospikeClient.rxGet(null, new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "xyz"), new String[] {"a"})
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("a"), Matchers.equalTo("abc"));
         })

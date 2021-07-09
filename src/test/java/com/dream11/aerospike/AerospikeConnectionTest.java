@@ -1,10 +1,10 @@
 package com.dream11.aerospike;
 
-import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
-import io.vertx.reactivex.core.Vertx;
+import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,8 +22,8 @@ public class AerospikeConnectionTest {
   @Test
   public void connect(Vertx vertx, VertxTestContext testContext) {
     AerospikeConnectOptions connectOptions = new AerospikeConnectOptions()
-        .setHost(System.getProperty("aerospike.host"))
-        .setPort(Integer.parseInt(System.getProperty("aerospike.port")));
+        .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
+        .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     AerospikeClient.create(vertx, connectOptions);
     testContext.completeNow();
   }
