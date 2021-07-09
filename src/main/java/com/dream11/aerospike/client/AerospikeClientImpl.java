@@ -82,32 +82,17 @@ public class AerospikeClientImpl implements AerospikeClient {
     }
   }
 
-  /**
-   * Determine if we are ready to talk to the database server cluster.
-   *
-   * @param handler the handler that will get the connection result
-   */
+
   @Override
   public void isConnected(Handler<AsyncResult<Boolean>> handler) {
     this.schedule(promise -> promise.complete(this.aerospikeClient.isConnected()), handler);
   }
 
-  /**
-   * Return operating cluster statistics.
-   */
   @Override
   public void getClusterStats(Handler<AsyncResult<ClusterStats>> handler) {
     this.schedule(promise -> promise.complete(this.aerospikeClient.getClusterStats()), handler);
   }
 
-  /**
-   * Close all client connections to database server nodes.
-   * <p>
-   * The client will send a cluster close signal to the event loops.
-   * The client instance does not initiate shutdown
-   * until the pending async commands complete.
-   * <p>
-   */
   public void close() {
     if (aerospikeClient != null) {
       aerospikeClient.close();
@@ -115,20 +100,6 @@ public class AerospikeClientImpl implements AerospikeClient {
     }
   }
 
-
-  /**
-   * Asynchronously write record bin(s).
-   * This method registers the command with an event loop.
-   * The event loop thread will process the command and send the results back in handler.
-   * <p>
-   * The policy specifies the transaction timeout, record expiration and how the transaction is
-   * handled when the record already exists.
-   *
-   * @param writePolicy write policy details
-   * @param key         unique record identifier
-   * @param bins        array of bin name/value pairs
-   * @param handler     the handler that will get the result
-   */
   public void put(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.put(
@@ -139,20 +110,6 @@ public class AerospikeClientImpl implements AerospikeClient {
         bins);
   }
 
-  /**
-   * Asynchronously append bin string values to existing record bin values.
-   * This method registers the command with an event loop.
-   * The event loop thread will process the command and send the results back in handler.
-   * <p>
-   * The policy specifies the transaction timeout, record expiration and how the transaction is
-   * handled when the record already exists.
-   * This call only works for string values.
-   *
-   * @param writePolicy write policy details
-   * @param key         unique record identifier
-   * @param bins        array of bin name/value pairs
-   * @param handler     the handler that will get the result
-   */
   public void append(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.append(
@@ -163,20 +120,6 @@ public class AerospikeClientImpl implements AerospikeClient {
         bins);
   }
 
-  /**
-   * Asynchronously prepend bin string values to existing record bin values.
-   * This method registers the command with an event loop.
-   * The event loop thread will process the command and send the results back in handler.
-   * <p>
-   * The policy specifies the transaction timeout, record expiration and how the transaction is
-   * handled when the record already exists.
-   * This call only works for string values.
-   *
-   * @param writePolicy write policy details
-   * @param key         unique record identifier
-   * @param bins        array of bin name/value pairs
-   * @param handler     the handler that will get the result
-   */
   public void prepend(
       WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
@@ -265,13 +208,13 @@ public class AerospikeClientImpl implements AerospikeClient {
   }
 
   public void get(
-      BatchPolicy batchPolicy, List<BatchRead> list, Handler<AsyncResult<List<BatchRead>>> handler)
+      BatchPolicy batchPolicy, List<BatchRead> records, Handler<AsyncResult<List<BatchRead>>> handler)
       throws AerospikeException {
     this.aerospikeClient.get(
         this.eventLoops.next(),
         new BatchListListenerImpl(this.vertx.getOrCreateContext(), handler),
         batchPolicy,
-        list);
+        records);
   }
 
   public void get(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
