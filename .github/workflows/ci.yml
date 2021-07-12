@@ -50,8 +50,11 @@ jobs:
         run: |
           mvn --batch-mode --update-snapshots verify
 
-      - name: Run codecov script
-        run: |
-          echo "Upload text coverage report"
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v1.5.0
+        with:
+          file: ./target/site/jacoco/jacoco.xml
+#         run: |
+#           echo "Upload text coverage report"
           # wget https://codecov.io/bash
           # bash bash -f "text.report.out" -U "-s" -A "-s"
