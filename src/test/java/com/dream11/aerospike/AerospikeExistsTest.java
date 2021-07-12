@@ -29,20 +29,20 @@ public class AerospikeExistsTest {
 
   @Test
   public void existingKey(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", 8), new Bin("bin3", "value2")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
+    Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
+    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "existingKey");
     aerospikeClient.rxPut(null, testKey, bins)
         .ignoreElement()
         .andThen(aerospikeClient.rxExists(null, testKey))
         .doOnSuccess(bool -> MatcherAssert.assertThat(bool, Matchers.equalTo(true)))
-        .doOnSuccess(record -> log.info("nonExistingKey test passed!"))
+        .doOnSuccess(record -> log.info("existingKey test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 
   @Test
   public void nonExistingKey(VertxTestContext testContext) {
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
-    aerospikeClient.rxExists(null, testKey)
+    Key nonExistingKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
+    aerospikeClient.rxExists(null, nonExistingKey)
         .doOnSuccess(bool -> MatcherAssert.assertThat(bool, Matchers.equalTo(false)))
         .doOnSuccess(record -> log.info("nonExistingKey test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
@@ -50,7 +50,7 @@ public class AerospikeExistsTest {
 
   @Test
   public void checkMultipleKeys(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", 8), new Bin("bin3", "value2")};
+    Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
     Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "checkMultipleKeys");
     Key nonExistingKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
     aerospikeClient.rxPut(null, testKey, bins)
