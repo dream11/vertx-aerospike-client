@@ -56,9 +56,9 @@ public class AerospikeExistsTest {
     aerospikeClient.rxPut(null, testKey, bins)
         .ignoreElement()
         .andThen(aerospikeClient.rxExists(null, new Key[] {testKey, nonExistingKey}))
-        .doOnSuccess(bool -> {
-          MatcherAssert.assertThat(bool.get(0), Matchers.equalTo(true));
-          MatcherAssert.assertThat(bool.get(1), Matchers.equalTo(false));
+        .doOnSuccess(booleans -> {
+          MatcherAssert.assertThat(booleans.get(0), Matchers.equalTo(true));
+          MatcherAssert.assertThat(booleans.get(1), Matchers.equalTo(false));
         })
         .doOnSuccess(record -> log.info("checkMultipleKeys test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);

@@ -56,12 +56,12 @@ public class AerospikeGetTest {
   @Test
   public void getAllBinsFromMultipleKeys(VertxTestContext testContext) {
     aerospikeClient.rxGet(null, new Key[] {key1, key2})
-        .doOnSuccess(record -> {
-          MatcherAssert.assertThat(record.get(0).getString("bin1"), Matchers.equalTo("Mumbai"));
-          MatcherAssert.assertThat(record.get(0).getInt("bin2"), Matchers.equalTo(123));
+        .doOnSuccess(records -> {
+          MatcherAssert.assertThat(records.get(0).getString("bin1"), Matchers.equalTo("Mumbai"));
+          MatcherAssert.assertThat(records.get(0).getInt("bin2"), Matchers.equalTo(123));
 
-          MatcherAssert.assertThat(record.get(1).getString("bin1"), Matchers.equalTo("Delhi"));
-          MatcherAssert.assertThat(record.get(1).getInt("bin2"), Matchers.equalTo(3));
+          MatcherAssert.assertThat(records.get(1).getString("bin1"), Matchers.equalTo("Delhi"));
+          MatcherAssert.assertThat(records.get(1).getInt("bin2"), Matchers.equalTo(3));
         })
         .doOnSuccess(record -> log.info("getAllBinsFromMultipleKeys test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);

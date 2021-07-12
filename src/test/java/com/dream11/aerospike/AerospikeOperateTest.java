@@ -2,6 +2,7 @@ package com.dream11.aerospike;
 
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.Operation;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
 import com.dream11.aerospike.reactivex.client.AerospikeClient;
 import io.vertx.junit5.VertxExtension;
@@ -16,8 +17,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
-public class AerospikePutTest {
+public class AerospikeOperateTest {
+
   private static AerospikeClient aerospikeClient;
+  private static final Key key3 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey3");
+  private static Bin[] bins = {new Bin("bin1", "Bangalore"), new Bin("bin2", 1)};
+  private static Bin[] appendBins = {new Bin("bin1", "Hyderabad"), new Bin("bin2", 2)};
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -25,20 +30,23 @@ public class AerospikePutTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+
+    aerospikeClient.getAerospikeClient().put(null, key3, bins);
   }
 
   @Test
-  public void putAllBins(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", "aaa"), new Bin("bin2", 111)};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey3");
-    aerospikeClient.rxPut(null, testKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+  public void operate(VertxTestContext testContext) {
+    Operation[] operations = {
+        Operation.append(appendBins[0]),
+        Operation.add(appendBins[1]),
+        Operation.get()
+    };
+    aerospikeClient.rxOperate(null, key3, operations)
         .doOnSuccess(record -> {
-          MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("aaa"));
-          MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(111));
+          MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("BangaloreHyderabad"));
+          MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(3));
         })
-        .doOnSuccess(record -> log.info("putAllBins test passed!"))
+        .doOnSuccess(record -> log.info("operate test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
   }
 }
