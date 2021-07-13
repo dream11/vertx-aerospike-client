@@ -1,6 +1,7 @@
 # The Reactive Aerospike Client
 
 [![Continuous Integration](https://github.com/dream11/vertx-aerospike-client/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/vertx-aerospike-client/actions/workflows/ci.yml)
+[![Code Coverage](https://codecov.io/gh/dream11/vertx-aerospike-client/branch/chore/master/graph/badge.svg)](https://codecov.io/gh/dream11/vertx-aerospike-client)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
