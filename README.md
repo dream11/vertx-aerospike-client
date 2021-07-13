@@ -6,7 +6,7 @@
 
 ## Overview
 
-TODO write overview of this repo
+The Vert.x Aerospike client provides an asynchronous API to interact aerospike server.
 
 ## Usage
 
@@ -39,17 +39,12 @@ Add the following dependency to the *dependencies* section of your build descrip
   AerospikeClient client = AerospikeClient.create(vertx, connectOptions);
   
   // create non shared aerospike client
-  AerospikeClient client = AerospikeClient.createShared(vertx, connectOptions);
-
-
-  
+  AerospikeClient client = AerospikeClient.createNonShared(vertx, connectOptions);
 ```
 
 ## Configuration
 
 Configuration options for `AerospikeConnectOptions`
-
-TODO add all configuration options
 
 | Key | Default  | Type  | Required | Description |
 | --- | --- | --- | --- | --- |
@@ -71,5 +66,21 @@ TODO add all configuration options
   AerospikeClient client = AerospikeClient.create(vertx, connectOptions);
   client
     .rxGet(policy, key)
-    .map()...
+    .map(record -> {
+      // Handle record
+        })...
+```
+
+## Running the tests
+
+To run the test suite:
+```shell
+  mvn clean verify
+```
+The test suite runs a Docker container from image `aerospike/aerospike-server` using [TestContainers](https://www.testcontainers.org/)
+by default. 
+
+To run the test suite on a container built from a different docker image:
+```shell
+  mvn clean verify -Daerospike.image=<image>
 ```

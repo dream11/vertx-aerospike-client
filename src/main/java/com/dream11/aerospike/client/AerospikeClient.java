@@ -43,6 +43,13 @@ import java.util.List;
 @VertxGen
 public interface AerospikeClient extends AutoCloseable {
 
+  /**
+   * Create a shared aerospike client using the given connect options.
+   * The client will be shared across a vertx instance
+   * @param vertx the vertx instance
+   * @param connectOptions user provided connection options
+   * @return the client
+   */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
     String sharedInstanceName = "__AerospikeClient.__for.__" + connectOptions.getHost() + ":" + connectOptions.getPort();
@@ -50,21 +57,44 @@ public interface AerospikeClient extends AutoCloseable {
         () -> new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy()));
   }
 
+  /**
+   * Like {@link AerospikeClient#create(Vertx, AerospikeConnectOptions)} with default options.
+   * @param vertx the vertx instance
+   * @return the client
+   */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient create(Vertx vertx) {
     return create(vertx, new AerospikeConnectOptions());
   }
 
+  /**
+   * Create a non shared aerospike client using the given connect options.
+   * It is not recommended to create several non shared clients in an application.
+   * @param vertx the vertx instance
+   * @param connectOptions user provided connection options
+   * @return the client
+   */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient createNonShared(Vertx vertx, AerospikeConnectOptions connectOptions) {
     return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy());
   }
 
+  /**
+   * Like {@link AerospikeClient#createNonShared(Vertx, AerospikeConnectOptions)} with default options.
+   * @param vertx the vertx instance
+   * @return the client
+   */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient createNonShared(Vertx vertx) {
     return createNonShared(vertx, new AerospikeConnectOptions());
   }
 
+  /**
+   * Determine if we are ready to talk to the database server cluster.
+   * @see com.aerospike.client.AerospikeClient#isConnected()
+   *
+   * @param handler               the handler that will handle response
+   */
   void isConnected(Handler<AsyncResult<Boolean>> handler);
 
   /**
