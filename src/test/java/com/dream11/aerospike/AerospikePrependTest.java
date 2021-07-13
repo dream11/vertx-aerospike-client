@@ -17,9 +17,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
 public class AerospikePrependTest {
-
+  private static final String testSet = "prependTestSet";
+  private static final Bin[] bins = {new Bin("bin1", "value1"), new Bin("bin2", "value2")};
+  private static final Key prependAllBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendAllBins");
+  private static final Key prependSomeBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendSomeBins");
+  private static final Key prependNonExistingBinTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendNonExistingBin");
   private static AerospikeClient aerospikeClient;
-  private final Bin[] bins = {new Bin("bin1", "value1"), new Bin("bin2", "value2")};
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -32,12 +35,11 @@ public class AerospikePrependTest {
   @Test
   public void prependAllBins(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-"), new Bin("bin2", "prepend2-")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "prependAllBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxPut(null, prependAllBinsTestKey, bins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, testKey, prependBins))
+        .andThen(aerospikeClient.rxPrepend(null, prependAllBinsTestKey, prependBins))
         .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, prependAllBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("prepend1-value1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("prepend2-value2"));
@@ -49,12 +51,11 @@ public class AerospikePrependTest {
   @Test
   public void prependSomeBins(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "prependSomeBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxPut(null, prependSomeBinsTestKey, bins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, testKey, prependBins))
+        .andThen(aerospikeClient.rxPrepend(null, prependSomeBinsTestKey, prependBins))
         .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, prependSomeBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("prepend1-value1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("value2"));
@@ -66,12 +67,11 @@ public class AerospikePrependTest {
   @Test
   public void prependNonExistingBin(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-"), new Bin("bin3", "value3")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "prependNonExistingBin");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxPut(null, prependNonExistingBinTestKey, bins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, testKey, prependBins))
+        .andThen(aerospikeClient.rxPrepend(null, prependNonExistingBinTestKey, prependBins))
         .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, prependNonExistingBinTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("prepend1-value1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("value2"));

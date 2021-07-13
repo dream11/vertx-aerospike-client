@@ -11,6 +11,7 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,12 @@ public class AerospikeGetTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.close();
   }
 
   @Test

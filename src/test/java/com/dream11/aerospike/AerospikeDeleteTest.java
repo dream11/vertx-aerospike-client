@@ -10,14 +10,18 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
-public class AerspikeDeleteTest {
+public class AerospikeDeleteTest {
 
+  private static final String testSet = "deleteTestSet";
+  private static final Bin[] bins = {new Bin("bin1", 8), new Bin("bin3", "value2")};
+  private static final Key testKey = new Key(Constants.TEST_NAMESPACE, testSet, "delete");
   private static AerospikeClient aerospikeClient;
 
   @BeforeAll
@@ -26,15 +30,17 @@ public class AerspikeDeleteTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+    aerospikeClient.getAerospikeClient().put(null, testKey, bins);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    aerospikeClient.close();
   }
 
   @Test
   public void delete(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", 8), new Bin("bin3", "value2")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "delete");
-    aerospikeClient.rxPut(null, testKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxDelete(null, testKey))
+    aerospikeClient.rxDelete(null, testKey)
         .ignoreElement()
         .andThen(aerospikeClient.rxExists(null, testKey))
         .doOnSuccess(bool -> MatcherAssert.assertThat(bool, Matchers.equalTo(false)))

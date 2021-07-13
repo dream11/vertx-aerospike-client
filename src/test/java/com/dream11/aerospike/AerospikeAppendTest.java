@@ -10,6 +10,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +19,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Slf4j
 public class AerospikeAppendTest {
 
+  private static final String testSet = "appendTestSet";
+  private static final Bin[] bins = {new Bin("bin1", "value1"), new Bin("bin2", "value2")};
+  private static final Key appendAllBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendAllBins");
+  private static final Key appendSomeBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendSomeBins");
+  private static final Key appendNonExistingBinTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "appendNonExistingBin");
   private static AerospikeClient aerospikeClient;
-  private final Bin[] bins = {new Bin("bin1", "value1"), new Bin("bin2", "value2")};
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -27,17 +32,25 @@ public class AerospikeAppendTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+    // add test keys
+    aerospikeClient.getAerospikeClient().put(null, appendAllBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, appendSomeBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, appendNonExistingBinTestKey, bins);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
+    aerospikeClient.close();
   }
 
   @Test
   public void appendAllBins(VertxTestContext testContext) {
     Bin[] appendBins = {new Bin("bin1", "-append1"), new Bin("bin2", "-append2")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "appendAllBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAppend(null, appendAllBinsTestKey, appendBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAppend(null, testKey, appendBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, appendAllBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("value1-append1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("value2-append2"));
@@ -49,12 +62,9 @@ public class AerospikeAppendTest {
   @Test
   public void appendSomeBins(VertxTestContext testContext) {
     Bin[] appendBins = {new Bin("bin1", "-append1")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "appendSomeBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAppend(null, appendSomeBinsTestKey, appendBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAppend(null, testKey, appendBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, appendSomeBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("value1-append1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("value2"));
@@ -66,12 +76,9 @@ public class AerospikeAppendTest {
   @Test
   public void appendNonExistingBin(VertxTestContext testContext) {
     Bin[] appendBins = {new Bin("bin1", "-append1"), new Bin("bin3", "value3")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "appendNonExistingBin");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAppend(null, appendNonExistingBinTestKey, appendBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAppend(null, testKey, appendBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, appendNonExistingBinTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("value1-append1"));
           MatcherAssert.assertThat(record.getString("bin2"), Matchers.equalTo("value2"));

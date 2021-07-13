@@ -11,6 +11,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,9 +21,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class AerospikeOperateTest {
 
   private static AerospikeClient aerospikeClient;
-  private static final Key key3 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey3");
-  private static Bin[] bins = {new Bin("bin1", "Bangalore"), new Bin("bin2", 1)};
-  private static Bin[] appendBins = {new Bin("bin1", "Hyderabad"), new Bin("bin2", 2)};
+  private static final String testSet = "operateTestSet";
+  private static final Key operateKey = new Key(Constants.TEST_NAMESPACE, testSet, "operate");
+  private static final Bin[] bins = {new Bin("bin1", "Bangalore"), new Bin("bin2", 1)};
+  private static final Bin[] appendBins = {new Bin("bin1", "Hyderabad"), new Bin("bin2", 2)};
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -31,7 +33,14 @@ public class AerospikeOperateTest {
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
 
-    aerospikeClient.getAerospikeClient().put(null, key3, bins);
+    aerospikeClient.getAerospikeClient().put(null, operateKey, bins);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
+    aerospikeClient.close();
   }
 
   @Test
@@ -41,7 +50,7 @@ public class AerospikeOperateTest {
         Operation.add(appendBins[1]),
         Operation.get()
     };
-    aerospikeClient.rxOperate(null, key3, operations)
+    aerospikeClient.rxOperate(null, operateKey, operations)
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getString("bin1"), Matchers.equalTo("BangaloreHyderabad"));
           MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(3));

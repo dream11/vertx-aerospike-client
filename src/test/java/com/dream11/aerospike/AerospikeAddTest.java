@@ -10,6 +10,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +18,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
 public class AerospikeAddTest {
-
+  private static final String testSet = "appendTestSet";
+  private static final Bin[] bins = {new Bin("bin1", 10), new Bin("bin2", 20)};
+  private static final Key addAllBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "addAllBins");
+  private static final Key addSomeBinsTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "addSomeBins");
+  private static final Key addNonExistingBinTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "addNonExistingBin");
   private static AerospikeClient aerospikeClient;
-  private final Bin[] bins = {new Bin("bin1", 10), new Bin("bin2", 20)};
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -27,17 +31,25 @@ public class AerospikeAddTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+    // add test keys
+    aerospikeClient.getAerospikeClient().put(null, addAllBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, addSomeBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, addNonExistingBinTestKey, bins);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
+    aerospikeClient.close();
   }
 
   @Test
   public void addAllBins(VertxTestContext testContext) {
     Bin[] addBins = {new Bin("bin1", 5), new Bin("bin2", -5)};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "addAllBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAdd(null, addAllBinsTestKey, addBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAdd(null, testKey, addBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, addAllBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getInt("bin1"), Matchers.equalTo(15));
           MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(15));
@@ -49,12 +61,9 @@ public class AerospikeAddTest {
   @Test
   public void addSomeBins(VertxTestContext testContext) {
     Bin[] addBins = {new Bin("bin1", 6)};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "addSomeBins");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAdd(null, addSomeBinsTestKey, addBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAdd(null, testKey, addBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, addSomeBinsTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getInt("bin1"), Matchers.equalTo(16));
           MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(20));
@@ -66,12 +75,9 @@ public class AerospikeAddTest {
   @Test
   public void addNonExistingBin(VertxTestContext testContext) {
     Bin[] addBins = {new Bin("bin1", 8), new Bin("bin3", -5)};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "addNonExistingBin");
-    aerospikeClient.rxPut(null, testKey, bins)
+    aerospikeClient.rxAdd(null, addNonExistingBinTestKey, addBins)
         .ignoreElement()
-        .andThen(aerospikeClient.rxAdd(null, testKey, addBins))
-        .ignoreElement()
-        .andThen(aerospikeClient.rxGet(null, testKey))
+        .andThen(aerospikeClient.rxGet(null, addNonExistingBinTestKey))
         .doOnSuccess(record -> {
           MatcherAssert.assertThat(record.getInt("bin1"), Matchers.equalTo(18));
           MatcherAssert.assertThat(record.getInt("bin2"), Matchers.equalTo(20));

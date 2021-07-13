@@ -10,6 +10,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
 public class AerospikePutTest {
+  private static final String testSet = "putTestSet";
+  private static final Bin[] bins = {new Bin("bin1", "aaa"), new Bin("bin2", 111)};
+  private static final Key testKey = new Key(Constants.TEST_NAMESPACE, testSet, "putAllBins");
   private static AerospikeClient aerospikeClient;
 
   @BeforeAll
@@ -27,10 +31,14 @@ public class AerospikePutTest {
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
   }
 
+  @AfterAll
+  public static void cleanUp() {
+    aerospikeClient.getAerospikeClient().delete(null, testKey);
+    aerospikeClient.close();
+  }
+
   @Test
   public void putAllBins(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", "aaa"), new Bin("bin2", 111)};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey3");
     aerospikeClient.rxPut(null, testKey, bins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, testKey))

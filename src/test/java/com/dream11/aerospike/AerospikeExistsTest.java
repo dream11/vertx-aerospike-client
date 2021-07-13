@@ -17,6 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({VertxExtension.class, Setup.class})
 @Slf4j
 public class AerospikeExistsTest {
+  private static final String testSet = "existsTestSet";
+  private static final Key existingTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "existingKey");
+  private static final Key nonExistingTestKey = new Key(Constants.TEST_NAMESPACE, testSet, "nonExistingKey");
+  private static final Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
   private static AerospikeClient aerospikeClient;
 
   @BeforeAll
@@ -25,15 +29,13 @@ public class AerospikeExistsTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+    // add test keys
+    aerospikeClient.getAerospikeClient().put(null, existingTestKey, bins);
   }
 
   @Test
   public void existingKey(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "existingKey");
-    aerospikeClient.rxPut(null, testKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxExists(null, testKey))
+    aerospikeClient.rxExists(null, existingTestKey)
         .doOnSuccess(bool -> MatcherAssert.assertThat(bool, Matchers.equalTo(true)))
         .doOnSuccess(record -> log.info("existingKey test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
@@ -41,8 +43,7 @@ public class AerospikeExistsTest {
 
   @Test
   public void nonExistingKey(VertxTestContext testContext) {
-    Key nonExistingKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
-    aerospikeClient.rxExists(null, nonExistingKey)
+    aerospikeClient.rxExists(null, nonExistingTestKey)
         .doOnSuccess(bool -> MatcherAssert.assertThat(bool, Matchers.equalTo(false)))
         .doOnSuccess(record -> log.info("nonExistingKey test passed!"))
         .subscribe(record -> testContext.completeNow(), testContext::failNow);
@@ -51,11 +52,7 @@ public class AerospikeExistsTest {
   @Test
   public void checkMultipleKeys(VertxTestContext testContext) {
     Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
-    Key testKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "checkMultipleKeys");
-    Key nonExistingKey = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "nonExistingKey");
-    aerospikeClient.rxPut(null, testKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxExists(null, new Key[] {testKey, nonExistingKey}))
+   aerospikeClient.rxExists(null, new Key[] {existingTestKey, nonExistingTestKey})
         .doOnSuccess(booleans -> {
           MatcherAssert.assertThat(booleans.get(0), Matchers.equalTo(true));
           MatcherAssert.assertThat(booleans.get(1), Matchers.equalTo(false));

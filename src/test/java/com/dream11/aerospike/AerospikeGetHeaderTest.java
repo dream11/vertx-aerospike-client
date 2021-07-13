@@ -11,6 +11,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class AerospikeGetHeaderTest {
 
   private static AerospikeClient aerospikeClient;
-  private static final Key key3 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey3");
-  private static final Key key4 = new Key(Constants.TEST_NAMESPACE, Constants.TEST_SET, "pkey4");
+  private static final String testSet = "getHeaderTestSet";
+  private static final Key key3 = new Key(Constants.TEST_NAMESPACE, testSet, "pkey3");
+  private static final Key key4 = new Key(Constants.TEST_NAMESPACE, testSet, "pkey4");
 
   @BeforeAll
   public static void setup(Vertx vertx) {
@@ -38,6 +40,13 @@ public class AerospikeGetHeaderTest {
     aerospikeClient.getAerospikeClient().append(policy, key3, bins4);
     policy.expiration = 0;
     aerospikeClient.getAerospikeClient().put(policy, key4, bins4);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
+    aerospikeClient.close();
   }
 
   @Test
