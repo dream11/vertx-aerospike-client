@@ -28,6 +28,7 @@ import com.aerospike.client.query.PartitionFilter;
 import com.aerospike.client.query.Statement;
 import com.dream11.aerospike.config.AerospikeConnectOptions;
 import com.dream11.aerospike.util.SharedDataUtils;
+import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
@@ -94,17 +95,22 @@ public interface AerospikeClient extends AutoCloseable {
    * @see com.aerospike.client.AerospikeClient#isConnected()
    *
    * @param handler               the handler that will handle response
+   * @return                      current Aerospike client instance
    */
-  void isConnected(Handler<AsyncResult<Boolean>> handler);
+  @GenIgnore(GenIgnore.PERMITTED_TYPE)
+  @Fluent
+  AerospikeClient isConnected(Handler<AsyncResult<Boolean>> handler);
 
   /**
    * Return operating cluster statistics.
    * @see com.aerospike.client.AerospikeClient#getClusterStats()
    *
    * @param handler               the handler that will handle the received cluster statistics
+   * @return                      current Aerospike client instance
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void getClusterStats(Handler<AsyncResult<ClusterStats>> handler);
+  @Fluent
+  AerospikeClient getClusterStats(Handler<AsyncResult<ClusterStats>> handler);
 
 
   /**
@@ -129,10 +135,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key                   unique record identifier
    * @param bins                  array of bin name/value pairs
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void put(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  @Fluent
+  AerospikeClient put(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException;
 
   /**
@@ -143,10 +151,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key                   unique record identifier
    * @param bins                  array of bin name/value pairs
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void append(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  @Fluent
+  AerospikeClient append(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException;
 
   /**
@@ -157,10 +167,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key                   unique record identifier
    * @param bins                  array of bin name/value pairs
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void prepend(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  @Fluent
+  AerospikeClient prepend(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException;
 
   /**
@@ -171,10 +183,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key                   unique record identifier
    * @param bins                  array of bin name/value pairs
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void add(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  @Fluent
+  AerospikeClient add(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException;
 
   /**
@@ -184,10 +198,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param writePolicy           write configuration parameters, pass in null for defaults
    * @param key                   unique record identifier
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void delete(WritePolicy writePolicy, Key key, Handler<AsyncResult<Boolean>> handler)
+  @Fluent
+  AerospikeClient delete(WritePolicy writePolicy, Key key, Handler<AsyncResult<Boolean>> handler)
       throws AerospikeException;
 
   /**
@@ -197,10 +213,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param writePolicy           write configuration parameters, pass in null for defaults
    * @param key                   unique record identifier
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void touch(WritePolicy writePolicy, Key key, Handler<AsyncResult<Key>> handler)
+  @Fluent
+  AerospikeClient touch(WritePolicy writePolicy, Key key, Handler<AsyncResult<Key>> handler)
       throws AerospikeException;
 
 
@@ -211,10 +229,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param policy                generic configuration parameters, pass in null for defaults
    * @param key                   unique record identifier
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void exists(Policy policy, Key key, Handler<AsyncResult<Boolean>> handler)
+  @Fluent
+  AerospikeClient exists(Policy policy, Key key, Handler<AsyncResult<Boolean>> handler)
       throws AerospikeException;
 
   /**
@@ -224,10 +244,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param batchPolicy	          batch configuration parameters, pass in null for defaults
    * @param keys				          unique record identifiers
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void exists(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Boolean>>> handler)
+  @Fluent
+  AerospikeClient exists(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Boolean>>> handler)
       throws AerospikeException;
 
   /**
@@ -237,10 +259,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param policy                generic configuration parameters, pass in null for defaults
    * @param key                   unique record identifier
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void get(Policy policy, Key key, Handler<AsyncResult<Record>> handler) throws AerospikeException;
+  @Fluent
+  AerospikeClient get(Policy policy, Key key, Handler<AsyncResult<Record>> handler) throws AerospikeException;
 
   /**
    * Asynchronously read record header and bins for specified key.
@@ -250,10 +274,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key                   unique record identifier
    * @param binNames              bins to retrieve
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void get(Policy policy, Key key, String[] binNames, Handler<AsyncResult<Record>> handler)
+  @Fluent
+  AerospikeClient get(Policy policy, Key key, String[] binNames, Handler<AsyncResult<Record>> handler)
       throws AerospikeException;
 
   /**
@@ -263,10 +289,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param policy                generic configuration parameters, pass in null for defaults
    * @param key                   unique record identifier
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void getHeader(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
+  @Fluent
+  AerospikeClient getHeader(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
       throws AerospikeException;
 
   /**
@@ -277,10 +305,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param records               list of unique record identifiers and the bins to retrieve.
    *                              The returned records are located in the same list.
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void get(
+  @Fluent
+  AerospikeClient get(
       BatchPolicy batchPolicy, List<BatchRead> records, Handler<AsyncResult<List<BatchRead>>> handler)
       throws AerospikeException;
 
@@ -291,10 +321,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param batchPolicy	          batch configuration parameters, pass in null for defaults
    * @param keys                  array of unique record identifiers
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void get(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
+  @Fluent
+  AerospikeClient get(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
       throws AerospikeException;
 
   /**
@@ -304,10 +336,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param keys                  array of unique record identifiers
    * @param binNames              array of bins to retrieve
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void get(
+  @Fluent
+  AerospikeClient get(
       BatchPolicy batchPolicy,
       Key[] keys,
       String[] binNames,
@@ -321,10 +355,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param batchPolicy	          batch configuration parameters, pass in null for defaults
    * @param keys                  array of unique record identifiers
    * @param handler               the handler that will handle the result
+   * @return                      current Aerospike client instance
    * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void getHeader(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
+  @Fluent
+  AerospikeClient getHeader(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
       throws AerospikeException;
 
   /**
@@ -335,10 +371,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param key					          unique record identifier
    * @param operations			      database operations to perform
    * @param handler               the handler that will handle the result
-   * @throws AerospikeException	  if event loop registration fail
+   * @return                      current Aerospike client instance
+   * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void operate(
+  @Fluent
+  AerospikeClient operate(
       WritePolicy writePolicy,
       Key key,
       Operation[] operations,
@@ -354,10 +392,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param setName				        optional set name - equivalent to database table
    * @param binNames				      optional bins to retrieve. All bins will be returned if empty.
    * @param handler               the handler that will handle the result
-   * @throws AerospikeException	  if event loop registration fails
+   * @return                      current Aerospike client instance
+   * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void scanAll(ScanPolicy policy, String namespace, String setName,
+  @Fluent
+  AerospikeClient scanAll(ScanPolicy policy, String namespace, String setName,
                String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException;
 
@@ -371,10 +411,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param setName				        optional set name - equivalent to database table
    * @param binNames				      optional bins to retrieve. All bins will be returned if empty.
    * @param handler               the handler that will handle the result
-   * @throws AerospikeException	  if event loop registration fails
+   * @return                      current Aerospike client instance
+   * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
+  @Fluent
+  AerospikeClient scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
                       String setName, String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException;
 
@@ -388,10 +430,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param functionName			    user defined function
    * @param functionArgs			    arguments passed in to user defined function
    * @param handler               the handler that will handle the result
-   * @throws AerospikeException	  if event loop registration fails
+   * @return                      current Aerospike client instance
+   * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void execute(
+  @Fluent
+  AerospikeClient execute(
       WritePolicy writePolicy,
       Key key,
       String packageName,
@@ -407,10 +451,12 @@ public interface AerospikeClient extends AutoCloseable {
    * @param queryPolicy			      query configuration parameters, pass in null for defaults
    * @param statement				      query filter. Statement instance is not suitable for reuse since it's modified in this method.
    * @param handler               the handler that will handle the result
-   * @throws AerospikeException	  if event loop registration fails
+   * @return                      current Aerospike client instance
+   * @throws AerospikeException   if event loop registration fails
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
-  void query(
+  @Fluent
+  AerospikeClient query(
       QueryPolicy queryPolicy, Statement statement, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException;
 }

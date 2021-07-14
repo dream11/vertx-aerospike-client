@@ -82,15 +82,16 @@ public class AerospikeClientImpl implements AerospikeClient {
     }
   }
 
-
   @Override
-  public void isConnected(Handler<AsyncResult<Boolean>> handler) {
+  public AerospikeClient isConnected(Handler<AsyncResult<Boolean>> handler) {
     this.schedule(promise -> promise.complete(this.aerospikeClient.isConnected()), handler);
+    return this;
   }
 
   @Override
-  public void getClusterStats(Handler<AsyncResult<ClusterStats>> handler) {
+  public AerospikeClient getClusterStats(Handler<AsyncResult<ClusterStats>> handler) {
     this.schedule(promise -> promise.complete(this.aerospikeClient.getClusterStats()), handler);
+    return this;
   }
 
   public void close() {
@@ -100,7 +101,7 @@ public class AerospikeClientImpl implements AerospikeClient {
     }
   }
 
-  public void put(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  public AerospikeClient put(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.put(
         this.eventLoops.next(),
@@ -108,9 +109,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         writePolicy,
         key,
         bins);
+    return this;
   }
 
-  public void append(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  public AerospikeClient append(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.append(
         this.eventLoops.next(),
@@ -118,9 +120,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         writePolicy,
         key,
         bins);
+    return this;
   }
 
-  public void prepend(
+  public AerospikeClient prepend(
       WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.prepend(
@@ -129,9 +132,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         writePolicy,
         key,
         bins);
+    return this;
   }
 
-  public void add(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
+  public AerospikeClient add(WritePolicy writePolicy, Key key, Bin[] bins, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.add(
         this.eventLoops.next(),
@@ -139,37 +143,41 @@ public class AerospikeClientImpl implements AerospikeClient {
         writePolicy,
         key,
         bins);
+    return this;
   }
 
-  public void delete(WritePolicy writePolicy, Key key, Handler<AsyncResult<Boolean>> handler)
+  public AerospikeClient delete(WritePolicy writePolicy, Key key, Handler<AsyncResult<Boolean>> handler)
       throws AerospikeException {
     this.aerospikeClient.delete(
         this.eventLoops.next(),
         new DeleteListenerImpl(this.vertx.getOrCreateContext(), handler),
         writePolicy,
         key);
+    return this;
   }
 
-  public void touch(WritePolicy writePolicy, Key key, Handler<AsyncResult<Key>> handler)
+  public AerospikeClient touch(WritePolicy writePolicy, Key key, Handler<AsyncResult<Key>> handler)
       throws AerospikeException {
     this.aerospikeClient.touch(
         this.eventLoops.next(),
         new WriteListenerImpl(this.vertx.getOrCreateContext(), handler),
         writePolicy,
         key);
+    return this;
   }
 
-  public void exists(Policy policy, Key key, Handler<AsyncResult<Boolean>> handler)
+  public AerospikeClient exists(Policy policy, Key key, Handler<AsyncResult<Boolean>> handler)
       throws AerospikeException {
     this.aerospikeClient.exists(
         this.eventLoops.next(),
         new ExistsListenerImpl(this.vertx.getOrCreateContext(), handler),
         policy,
         key);
+    return this;
   }
 
   // TODO: see the performance difference between ArrayListener and SequenceListener for all such batch commands
-  public void exists(
+  public AerospikeClient exists(
       BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Boolean>>> handler)
       throws AerospikeException {
     this.aerospikeClient.exists(
@@ -177,18 +185,20 @@ public class AerospikeClientImpl implements AerospikeClient {
         new ExistsArrayListenerImpl(this.vertx.getOrCreateContext(), handler),
         batchPolicy,
         keys);
+    return this;
   }
 
-  public void get(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
+  public AerospikeClient get(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
       throws AerospikeException {
     this.aerospikeClient.get(
         this.eventLoops.next(),
         new RecordListenerImpl(this.vertx.getOrCreateContext(), handler),
         policy,
         key);
+    return this;
   }
 
-  public void get(Policy policy, Key key, String[] binNames, Handler<AsyncResult<Record>> handler)
+  public AerospikeClient get(Policy policy, Key key, String[] binNames, Handler<AsyncResult<Record>> handler)
       throws AerospikeException {
     this.aerospikeClient.get(
         this.eventLoops.next(),
@@ -196,18 +206,20 @@ public class AerospikeClientImpl implements AerospikeClient {
         policy,
         key,
         binNames);
+    return this;
   }
 
-  public void getHeader(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
+  public AerospikeClient getHeader(Policy policy, Key key, Handler<AsyncResult<Record>> handler)
       throws AerospikeException {
     this.aerospikeClient.getHeader(
         this.eventLoops.next(),
         new RecordListenerImpl(this.vertx.getOrCreateContext(), handler),
         policy,
         key);
+    return this;
   }
 
-  public void get(
+  public AerospikeClient get(
       BatchPolicy batchPolicy, List<BatchRead> records, Handler<AsyncResult<List<BatchRead>>> handler)
       throws AerospikeException {
     this.aerospikeClient.get(
@@ -215,18 +227,20 @@ public class AerospikeClientImpl implements AerospikeClient {
         new BatchListListenerImpl(this.vertx.getOrCreateContext(), handler),
         batchPolicy,
         records);
+    return this;
   }
 
-  public void get(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
+  public AerospikeClient get(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
       throws AerospikeException {
     this.aerospikeClient.get(
         this.eventLoops.next(),
         new RecordArrayListenerImpl(this.vertx.getOrCreateContext(), handler),
         batchPolicy,
         keys);
+    return this;
   }
 
-  public void get(
+  public AerospikeClient get(
       BatchPolicy batchPolicy,
       Key[] keys,
       String[] binNames,
@@ -238,18 +252,20 @@ public class AerospikeClientImpl implements AerospikeClient {
         batchPolicy,
         keys,
         binNames);
+    return this;
   }
 
-  public void getHeader(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
+  public AerospikeClient getHeader(BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Record>>> handler)
       throws AerospikeException {
     this.aerospikeClient.getHeader(
         this.eventLoops.next(),
         new RecordArrayListenerImpl(this.vertx.getOrCreateContext(), handler),
         batchPolicy,
         keys);
+    return this;
   }
 
-  public void operate(
+  public AerospikeClient operate(
       WritePolicy writePolicy,
       Key key,
       Operation[] operations,
@@ -261,9 +277,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         writePolicy,
         key,
         operations);
+    return this;
   }
 
-  public void scanAll(ScanPolicy policy, String namespace, String setName,
+  public AerospikeClient scanAll(ScanPolicy policy, String namespace, String setName,
                       String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException {
     this.aerospikeClient.scanAll(
@@ -273,9 +290,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         namespace,
         setName,
         binNames);
+    return this;
   }
 
-  public void scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
+  public AerospikeClient scanPartitions(ScanPolicy policy, PartitionFilter partitionFilter, String namespace,
                              String setName, String[] binNames, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException {
     this.aerospikeClient.scanPartitions(
@@ -286,9 +304,10 @@ public class AerospikeClientImpl implements AerospikeClient {
         namespace,
         setName,
         binNames);
+    return this;
   }
 
-  public void execute(
+  public AerospikeClient execute(
       WritePolicy writePolicy,
       Key key,
       String packageName,
@@ -304,16 +323,18 @@ public class AerospikeClientImpl implements AerospikeClient {
         packageName,
         functionName,
         functionArgs);
+    return this;
   }
 
   // TODO: check if this works properly
-  public void query(QueryPolicy queryPolicy, Statement statement, Handler<AsyncResult<List<KeyRecord>>> handler)
+  public AerospikeClient query(QueryPolicy queryPolicy, Statement statement, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException {
     this.aerospikeClient.query(
         this.eventLoops.next(),
         new QueryResultListenerImpl(this.vertx.getOrCreateContext(), handler),
         queryPolicy,
         statement);
+    return this;
   }
 
 }
