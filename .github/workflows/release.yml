@@ -7,15 +7,15 @@ on:
     types: [released]
 
 jobs:
-  upload_to_luarocks:
+  upload_to_maven_central:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Assert branch name is master
-      if: ${{ github.ref != 'refs/heads/master' }}
-      run: |
-        echo "Releases can be performed only on master branch"
-        exit 1
+#    - name: Assert branch name is master
+#      if: ${{ github.ref != 'refs/heads/master' }}
+#      run: |
+#        echo "Releases can be performed only on master branch"
+#        exit 1
 
     - name: Checkout repository
       uses: actions/checkout@v2
