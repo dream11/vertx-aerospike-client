@@ -26,7 +26,7 @@
 
   <developers>
     <developer>
-      <name>Deepak Choughle</name>
+      <name>Deepak Chougule</name>
       <email>deepak.chougule@dream11.com</email>
       <organization>Dream11</organization>
       <organizationUrl>https://www.dream11.com/</organizationUrl>
@@ -42,6 +42,13 @@
     <developer>
       <name>Karan Kumar</name>
       <email>karan.kumar@dream11.com</email>
+      <organization>Dream11</organization>
+      <organizationUrl>https://www.dream11.com/</organizationUrl>
+    </developer>
+
+    <developer>
+      <name>Srijan Gupta</name>
+      <email>srijan@dream11.com</email>
       <organization>Dream11</organization>
       <organizationUrl>https://www.dream11.com/</organizationUrl>
     </developer>
