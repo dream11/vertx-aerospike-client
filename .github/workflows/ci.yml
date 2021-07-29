@@ -24,6 +24,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Configure GPG Key
+        run: |
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+          gpg --list-secret-keys --keyid-format LONG
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout github branch
         uses: actions/checkout@v2
