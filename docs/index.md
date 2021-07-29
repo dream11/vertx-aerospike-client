@@ -14,11 +14,11 @@ Add the following dependency to the *dependencies* section of your build descrip
 
 - Maven (in your `pom.xml`):
 ```xml
-<dependency>
-  <groupId>io.d11</groupId>
-  <artifactId>vertx-aerospike-client</artifactId>
-  <version>LATEST</version>
-</dependency>
+  <dependency>
+    <groupId>io.d11</groupId>
+    <artifactId>vertx-aerospike-client</artifactId>
+    <version>LATEST</version>
+  </dependency>
 ```
 
 - Gradle (in your `build.gradle` file):
@@ -70,6 +70,8 @@ Configuration options for `AerospikeConnectOptions`
       // Handle record
         })...
 ```
+
+Detailed documentation can be found [here](https://javadoc.io/doc/io.d11/vertx-aerospike-client/latest/index.html).
 
 ## Running the tests
 

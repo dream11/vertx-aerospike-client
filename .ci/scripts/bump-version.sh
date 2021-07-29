@@ -9,4 +9,4 @@ git config user.email github-actions@github.com
 
 git add pom.xml
 git commit -m "chore: release version $release_version and bump version to $bump_version"
-git push
+git push origin master
