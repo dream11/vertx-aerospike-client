@@ -176,7 +176,6 @@ public class AerospikeClientImpl implements AerospikeClient {
     return this;
   }
 
-  // TODO: see the performance difference between ArrayListener and SequenceListener for all such batch commands
   public AerospikeClient exists(
       BatchPolicy batchPolicy, Key[] keys, Handler<AsyncResult<List<Boolean>>> handler)
       throws AerospikeException {
@@ -326,7 +325,6 @@ public class AerospikeClientImpl implements AerospikeClient {
     return this;
   }
 
-  // TODO: check if this works properly
   public AerospikeClient query(QueryPolicy queryPolicy, Statement statement, Handler<AsyncResult<List<KeyRecord>>> handler)
       throws AerospikeException {
     this.aerospikeClient.query(
