@@ -26,9 +26,10 @@ jobs:
       id: get_version
       run: |
         echo $GITHUB_REF
-        realversion="${GITHUB_REF//v/}"
-        echo $realversion
-        echo "::set-output name=VERSION::$realversion"
+        releaseVersion="${GITHUB_REF/refs\/tags\//}"
+        releaseVersion="${releaseVersion//v/}"
+        echo $releaseVersion
+        echo "::set-output name=VERSION::$releaseVersion"
 
     - name: Set up publishing to maven central
       uses: actions/setup-java@v2
@@ -38,14 +39,12 @@ jobs:
         server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
+        gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }} # Value of the GPG private key to import
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
 
     - name: mvn versions
       run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
 
-    - name: Install gpg key
-      run: |
-        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
-        gpg --list-secret-keys --keyid-format LONG
 
 #    - name: Publish
 #      run: |
@@ -55,6 +54,7 @@ jobs:
 #      env:
 #        MAVEN_USERNAME: ${{ secrets.D11_NEXUS_USERNAME }}
 #        MAVEN_PASSWORD: ${{ secrets.D11_NEXUS_PASSWORD }}
+#        MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
 #
 #    - name: Bump version
 #      run: .ci/scripts/bump-version.sh
