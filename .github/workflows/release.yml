@@ -11,8 +11,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Assert branch name is master
+      if: ${{ github.ref != 'refs/heads/master' }}
+      run: |
+        echo "Releases can be performed only on master branch"
+        exit 1
+
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
 
-    - run: .ci/scripts/install-deps.sh
-    - run: .ci/scripts/upload.sh ${{ secrets.D11_NEXUS_USERNAME }} ${{ secrets.D11_NEXUS_PASSWORD }}
+    - name: get version from tag
+      id: get_version
+      run: |
+        realversion="${GITHUB_REF//v/}"
+        echo "::set-output name=VERSION::$realversion"
+
+    - name: Set up publishing to maven central
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+
+    - name: mvn versions
+      run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
+
+    - name: Install gpg key
+      run: |
+        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+        gpg --list-secret-keys --keyid-format LONG
+
+    - name: Publish
+      run: |
+        mvn --no-transfer-progress --batch-mode \
+          -Dgpg.passphrase='${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}' \
+          -DskipTests deploy -P release
+      env:
+        MAVEN_USERNAME: ${{ secrets.D11_NEXUS_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.D11_NEXUS_PASSWORD }}
+
+    - name: Bump version
+      run: .ci/scripts/bump-version.sh

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.dream11</groupId>
+  <groupId>io.d11</groupId>
   <artifactId>vertx-aerospike-client</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
@@ -26,7 +26,7 @@
 
   <developers>
     <developer>
-      <name>Deepak Choughle</name>
+      <name>Deepak Chougule</name>
       <email>deepak.chougule@dream11.com</email>
       <organization>Dream11</organization>
       <organizationUrl>https://www.dream11.com/</organizationUrl>
@@ -42,6 +42,13 @@
     <developer>
       <name>Karan Kumar</name>
       <email>karan.kumar@dream11.com</email>
+      <organization>Dream11</organization>
+      <organizationUrl>https://www.dream11.com/</organizationUrl>
+    </developer>
+
+    <developer>
+      <name>Srijan Gupta</name>
+      <email>srijan@dream11.com</email>
       <organization>Dream11</organization>
       <organizationUrl>https://www.dream11.com/</organizationUrl>
     </developer>
