@@ -12,6 +12,8 @@
 
   <scm>
     <developerConnection>scm:git:https://github.com/dream11/vertx-aerospike-client.git</developerConnection>
+    <connection>scm:git:https://github.com/dream11/vertx-aerospike-client.git</connection>
+    <url>https://github.com/dream11/vertx-aerospike-client</url>
     <tag>HEAD</tag>
   </scm>
 
