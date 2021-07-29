@@ -1,7 +1,7 @@
 # The Reactive Aerospike Client
 
 [![Continuous Integration](https://github.com/dream11/vertx-aerospike-client/actions/workflows/ci.yml/badge.svg)](https://github.com/dream11/vertx-aerospike-client/actions/workflows/ci.yml)
-[![Code Coverage](https://codecov.io/gh/dream11/vertx-aerospike-client/branch/chore/master/graph/badge.svg)](https://codecov.io/gh/dream11/vertx-aerospike-client)
+[![Code Coverage](https://codecov.io/gh/dream11/vertx-aerospike-client/branch/master/graph/badge.svg)](https://codecov.io/gh/dream11/vertx-aerospike-client)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Overview
@@ -11,20 +11,20 @@ The Vert.x Aerospike client provides an asynchronous API to interact aerospike s
 ## Usage
 
 Add the following dependency to the *dependencies* section of your build descriptor:
-  
+
 - Maven (in your `pom.xml`):
 ```xml
-  <dependency>
-    <groupId>io.vertx</groupId>
-    <artifactId>vertx-aerospike-client</artifactId>
-    <version>x.y.x</version>
-  </dependency>
+<dependency>
+  <groupId>io.d11</groupId>
+  <artifactId>vertx-aerospike-client</artifactId>
+  <version>LATEST</version>
+</dependency>
 ```
 
 - Gradle (in your `build.gradle` file):
 ```
   dependencies {
-   compile 'io.vertx:vertx-aerospike-client:x.y.z'
+   compile 'io.d11:vertx-aerospike-client:x.y.z'
   }
 ```
 
@@ -78,7 +78,7 @@ To run the test suite:
   mvn clean verify
 ```
 The test suite runs a Docker container from image `aerospike/aerospike-server` using [TestContainers](https://www.testcontainers.org/)
-by default. 
+by default.
 
 To run the test suite on a container built from a different docker image:
 ```shell
