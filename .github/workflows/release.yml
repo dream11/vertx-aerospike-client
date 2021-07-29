@@ -7,26 +7,22 @@ on:
     types: [released]
 
 jobs:
-  upload_to_luarocks:
+  upload_to_maven_central:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Assert branch name is master
-      if: ${{ github.ref != 'refs/heads/master' }}
-      run: |
-        echo "Releases can be performed only on master branch"
-        exit 1
 
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
         token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
 
-    - name: get version from tag
+    - name: Get version from tag
       id: get_version
       run: |
-        realversion="${GITHUB_REF//v/}"
-        echo "::set-output name=VERSION::$realversion"
+        releaseVersion="${GITHUB_REF/refs\/tags\//}"
+        releaseVersion="${releaseVersion//v/}"
+        echo "::set-output name=VERSION::$releaseVersion"
 
     - name: Set up publishing to maven central
       uses: actions/setup-java@v2
@@ -37,12 +33,12 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
 
-    - name: mvn versions
+    - name: Update version pom.xml
       run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
 
     - name: Install gpg key
       run: |
-        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | base64 --decode | gpg --batch --import
         gpg --list-secret-keys --keyid-format LONG
 
     - name: Publish
