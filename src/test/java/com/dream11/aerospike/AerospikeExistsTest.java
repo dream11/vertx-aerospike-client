@@ -10,6 +10,7 @@ import io.vertx.reactivex.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,13 @@ public class AerospikeExistsTest {
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
     // add test keys
     aerospikeClient.getAerospikeClient().put(null, existingTestKey, bins);
+  }
+
+  @AfterAll
+  public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
+    aerospikeClient.close();
   }
 
   @Test
