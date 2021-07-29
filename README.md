@@ -71,6 +71,8 @@ Configuration options for `AerospikeConnectOptions`
         })...
 ```
 
+Detailed documentation can be found [here](https://javadoc.io/doc/io.d11/vertx-aerospike-client/latest/index.html).
+
 ## Running the tests
 
 To run the test suite:
