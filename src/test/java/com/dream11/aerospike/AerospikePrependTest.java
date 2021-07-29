@@ -31,6 +31,10 @@ public class AerospikePrependTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
+    // add test keys
+    aerospikeClient.getAerospikeClient().put(null, prependAllBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, prependSomeBinsTestKey, bins);
+    aerospikeClient.getAerospikeClient().put(null, prependNonExistingBinTestKey, bins);
   }
 
   @AfterAll
@@ -43,9 +47,7 @@ public class AerospikePrependTest {
   @Test
   public void prependAllBins(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-"), new Bin("bin2", "prepend2-")};
-    aerospikeClient.rxPut(null, prependAllBinsTestKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, prependAllBinsTestKey, prependBins))
+    aerospikeClient.rxPrepend(null, prependAllBinsTestKey, prependBins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, prependAllBinsTestKey))
         .doOnSuccess(record -> {
@@ -59,9 +61,7 @@ public class AerospikePrependTest {
   @Test
   public void prependSomeBins(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-")};
-    aerospikeClient.rxPut(null, prependSomeBinsTestKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, prependSomeBinsTestKey, prependBins))
+    aerospikeClient.rxPrepend(null, prependSomeBinsTestKey, prependBins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, prependSomeBinsTestKey))
         .doOnSuccess(record -> {
@@ -75,9 +75,7 @@ public class AerospikePrependTest {
   @Test
   public void prependNonExistingBin(VertxTestContext testContext) {
     Bin[] prependBins = {new Bin("bin1", "prepend1-"), new Bin("bin3", "value3")};
-    aerospikeClient.rxPut(null, prependNonExistingBinTestKey, bins)
-        .ignoreElement()
-        .andThen(aerospikeClient.rxPrepend(null, prependNonExistingBinTestKey, prependBins))
+    aerospikeClient.rxPrepend(null, prependNonExistingBinTestKey, prependBins)
         .ignoreElement()
         .andThen(aerospikeClient.rxGet(null, prependNonExistingBinTestKey))
         .doOnSuccess(record -> {

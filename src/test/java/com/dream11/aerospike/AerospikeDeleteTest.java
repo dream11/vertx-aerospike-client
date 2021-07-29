@@ -35,6 +35,8 @@ public class AerospikeDeleteTest {
 
   @AfterAll
   public static void cleanUp() {
+    // remove test keys
+    aerospikeClient.getAerospikeClient().truncate(null, Constants.TEST_NAMESPACE, testSet, null);
     aerospikeClient.close();
   }
 

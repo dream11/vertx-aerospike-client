@@ -59,7 +59,6 @@ public class AerospikeExistsTest {
 
   @Test
   public void checkMultipleKeys(VertxTestContext testContext) {
-    Bin[] bins = {new Bin("bin1", 8), new Bin("bin2", "value2")};
    aerospikeClient.rxExists(null, new Key[] {existingTestKey, nonExistingTestKey})
         .doOnSuccess(booleans -> {
           MatcherAssert.assertThat(booleans.get(0), Matchers.equalTo(true));
