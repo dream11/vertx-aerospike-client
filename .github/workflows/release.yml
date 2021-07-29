@@ -25,7 +25,9 @@ jobs:
     - name: get version from tag
       id: get_version
       run: |
+        echo $GITHUB_REF
         realversion="${GITHUB_REF//v/}"
+        echo $realversion
         echo "::set-output name=VERSION::$realversion"
 
     - name: Set up publishing to maven central
@@ -45,14 +47,14 @@ jobs:
         cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
         gpg --list-secret-keys --keyid-format LONG
 
-    - name: Publish
-      run: |
-        mvn --no-transfer-progress --batch-mode \
-          -Dgpg.passphrase='${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}' \
-          -DskipTests deploy -P release
-      env:
-        MAVEN_USERNAME: ${{ secrets.D11_NEXUS_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.D11_NEXUS_PASSWORD }}
-
-    - name: Bump version
-      run: .ci/scripts/bump-version.sh
+#    - name: Publish
+#      run: |
+#        mvn --no-transfer-progress --batch-mode \
+#          -Dgpg.passphrase='${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}' \
+#          -DskipTests deploy -P release
+#      env:
+#        MAVEN_USERNAME: ${{ secrets.D11_NEXUS_USERNAME }}
+#        MAVEN_PASSWORD: ${{ secrets.D11_NEXUS_PASSWORD }}
+#
+#    - name: Bump version
+#      run: .ci/scripts/bump-version.sh
