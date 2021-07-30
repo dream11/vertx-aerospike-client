@@ -236,6 +236,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.plugin.version}</version>
         <configuration>
+          <noqualifier>all</noqualifier>
           <detectJavaApiLink>false</detectJavaApiLink>
           <doclint>none</doclint>
         </configuration>
