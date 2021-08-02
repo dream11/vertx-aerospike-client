@@ -30,6 +30,7 @@ import io.d11.aerospike.listeners.QueryResultListenerImpl;
 import io.d11.aerospike.listeners.RecordArrayListenerImpl;
 import io.d11.aerospike.listeners.RecordListenerImpl;
 import io.d11.aerospike.listeners.WriteListenerImpl;
+import io.d11.aerospike.util.SharedDataUtils;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
@@ -98,6 +99,7 @@ public class AerospikeClientImpl implements AerospikeClient {
   public void close() {
     if (aerospikeClient != null) {
       aerospikeClient.close();
+      SharedDataUtils.removeInstanceByName(vertx, SharedDataUtils.getInstanceName(connectOptions.getHost(), connectOptions.getPort()));
       aerospikeClient = null;
     }
   }
