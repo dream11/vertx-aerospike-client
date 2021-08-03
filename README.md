@@ -6,7 +6,8 @@
 
 ## Overview
 
-The Vert.x Aerospike client provides an asynchronous API to interact aerospike server.
+The Vert.x Aerospike client provides an asynchronous API to interact with aerospike server.
+(Internally uses [AerospikeClient's](https://www.aerospike.com/docs/client/java/) async commands and handles the result on vertx-context)
 
 ## Usage
 
