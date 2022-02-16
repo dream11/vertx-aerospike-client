@@ -87,7 +87,7 @@
     <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
     <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
     <maven.jacoco.plugin.version>0.8.6</maven.jacoco.plugin.version>
-    <mave.source.plugin.version>3.2.1</mave.source.plugin.version>
+    <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
     <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
     <maven.nexus.plugin.version>1.6.7</maven.nexus.plugin.version>
     <maven.release.plugin.version>3.0.0-M1</maven.release.plugin.version>
@@ -328,7 +328,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>${mave.source.plugin.version}</version>
+        <version>${maven.source.plugin.version}</version>
         <executions>
           <execution>
             <id>attach-sources</id>
