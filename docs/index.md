@@ -15,7 +15,7 @@ Add the following dependency to the *dependencies* section of your build descrip
 - Maven (in your `pom.xml`):
 ```xml
   <dependency>
-    <groupId>io.d11</groupId>
+    <groupId>com.dream11</groupId>
     <artifactId>vertx-aerospike-client</artifactId>
     <version>LATEST</version>
   </dependency>
@@ -24,7 +24,7 @@ Add the following dependency to the *dependencies* section of your build descrip
 - Gradle (in your `build.gradle` file):
 ```
   dependencies {
-   compile 'io.d11:vertx-aerospike-client:x.y.z'
+   compile 'com.dream11:vertx-aerospike-client:x.y.z'
   }
 ```
 
@@ -71,7 +71,7 @@ Configuration options for `AerospikeConnectOptions`
         })...
 ```
 
-Detailed documentation can be found [here](https://javadoc.io/doc/io.d11/vertx-aerospike-client/latest/index.html).
+Detailed documentation can be found [here](https://javadoc.io/doc/com.dream11/vertx-aerospike-client/latest/index.html).
 
 ## Running the tests
 
