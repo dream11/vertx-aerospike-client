@@ -35,13 +35,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-          
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
       
       - name: Install Dependencies
         run: .ci/scripts/install-deps.sh
