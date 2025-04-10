@@ -15,7 +15,7 @@ public class AerospikeConnectOptions {
   static final String OS = System.getProperty("os.name");
   static final String DEFAULT_HOST = "localhost";
   static final int DEFAULT_PORT = 3000;
-  static final int DEFAULT_EVENT_LOOP_SIZE = 2 * Runtime.getRuntime().availableProcessors();
+  static final int DEFAULT_EVENT_LOOP_SIZE = 4 * Runtime.getRuntime().availableProcessors();
   static final int DEFAULT_MAX_COMMANDS_IN_PROCESS = 100;
   static final int DEFAULT_MAX_CONNS_PER_NODE = DEFAULT_MAX_COMMANDS_IN_PROCESS * DEFAULT_EVENT_LOOP_SIZE;
   static final int DEFAULT_MAX_CONNECT_RETRIES = 2;
@@ -31,7 +31,7 @@ public class AerospikeConnectOptions {
 
   public AerospikeConnectOptions() {
     ClientPolicy clientPolicy = new ClientPolicy();
-    clientPolicy.readPolicyDefault.replica = Replica.MASTER_PROLES;
+    clientPolicy.readPolicyDefault.replica = Replica.MASTER;
     this.clientPolicy = clientPolicy;
     this.host = DEFAULT_HOST;
     this.port = DEFAULT_PORT;
