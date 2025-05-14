@@ -67,7 +67,7 @@
 
   <properties>
     <aerospike-driver.version>4.4.18</aerospike-driver.version>
-    <vertx.version>3.9.2</vertx.version>
+    <vertx.version>4.5.13</vertx.version>
     <netty.version>4.1.49.Final</netty.version>
     <guice.version>4.2.2</guice.version>
     <slf4j.version>1.8.0-beta2</slf4j.version>
@@ -126,12 +126,32 @@
 
     <dependency>
       <groupId>io.vertx</groupId>
+      <artifactId>vertx-rx-java3-gen</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
       <artifactId>vertx-rx-java2</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-rx-java3</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
 
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-junit5-rx-java3</artifactId>
+      <version>${vertx.version}</version>
       <scope>test</scope>
     </dependency>
 

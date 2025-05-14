@@ -33,10 +33,11 @@ import io.d11.aerospike.listeners.WriteListenerImpl;
 import io.d11.aerospike.util.SharedDataUtils;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
 import java.util.List;
+import java.util.concurrent.Callable;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,14 +58,8 @@ public class AerospikeClientImpl implements AerospikeClient {
     return this.aerospikeClient;
   }
 
-  private <T> void schedule(Handler<Promise<T>> handler, Handler<AsyncResult<T>> resultHandler) {
-    vertx.getOrCreateContext().executeBlocking(promise -> {
-      try {
-        handler.handle((Promise<T>) promise);
-      } catch (AerospikeException e) {
-        promise.fail(e);
-      }
-    }, result -> resultHandler.handle((AsyncResult<T>) result));
+  private <T> void schedule(Callable<T> blockingCodeHandler, Handler<AsyncResult<T>> resultHandler) {
+    vertx.executeBlocking(blockingCodeHandler).onComplete(resultHandler);
   }
 
   private com.aerospike.client.AerospikeClient connectClientWithRetry(int retryCount) {
@@ -86,13 +81,13 @@ public class AerospikeClientImpl implements AerospikeClient {
 
   @Override
   public AerospikeClient isConnected(Handler<AsyncResult<Boolean>> handler) {
-    this.schedule(promise -> promise.complete(this.aerospikeClient.isConnected()), handler);
+    this.schedule(() -> this.aerospikeClient.isConnected(), handler);
     return this;
   }
 
   @Override
   public AerospikeClient getClusterStats(Handler<AsyncResult<ClusterStats>> handler) {
-    this.schedule(promise -> promise.complete(this.aerospikeClient.getClusterStats()), handler);
+    this.schedule(() -> this.aerospikeClient.getClusterStats(), handler);
     return this;
   }
 

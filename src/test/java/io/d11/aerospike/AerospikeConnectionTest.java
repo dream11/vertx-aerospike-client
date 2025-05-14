@@ -1,10 +1,10 @@
 package io.d11.aerospike;
 
 import io.d11.aerospike.client.AerospikeConnectOptions;
-import io.d11.reactivex.aerospike.client.AerospikeClient;
+import io.d11.rxjava3.aerospike.client.AerospikeClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import io.vertx.reactivex.core.Vertx;
+import io.vertx.rxjava3.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,6 +34,8 @@ public class AerospikeConnectionTest {
         .setHost(System.getProperty(Constants.AEROSPIKE_HOST))
         .setPort(Integer.parseInt(System.getProperty(Constants.AEROSPIKE_PORT)));
     aerospikeClient = AerospikeClient.create(vertx, connectOptions);
-    testContext.completeNow();
+    aerospikeClient.rxIsConnected()
+        .doOnSuccess(res -> log.info("connect test passed!"))
+        .subscribe(res -> testContext.completeNow(),testContext::failNow);
   }
 }
