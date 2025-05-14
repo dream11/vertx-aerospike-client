@@ -2,10 +2,10 @@ package io.d11.aerospike;
 
 import com.aerospike.client.query.PartitionFilter;
 import io.d11.aerospike.client.AerospikeConnectOptions;
-import io.d11.reactivex.aerospike.client.AerospikeClient;
+import io.d11.rxjava3.aerospike.client.AerospikeClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import io.vertx.reactivex.core.Vertx;
+import io.vertx.rxjava3.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
