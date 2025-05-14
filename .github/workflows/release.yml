@@ -13,7 +13,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         token: ${{ secrets.COMMIT_ACCESS_TOKEN }}
 
@@ -25,7 +25,7 @@ jobs:
         echo "::set-output name=VERSION::$releaseVersion"
 
     - name: Set up publishing to maven central
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
         java-version: '8'
         distribution: 'adopt'
